@@ -1,0 +1,3 @@
+Redirect /lotro http://lotro.acasylum.com
+AddType x-mapp-php5 .php
+AddType application/x-java-jnlp-file .jnlp

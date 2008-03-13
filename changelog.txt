@@ -1,0 +1,12 @@
+Version 1.1.0.1
+    * Export to ABC respects the currently selected instrument's lowest-playable note.
+    * Export to ABC now shouldn't allow chords with more than 6 notes.
+    * Fixed the occasional "unexpected token" error in some exported ABC files.
+
+Version 1.1.0.0
+    * Added the ability to export to ABC files.
+    * Added the ability to connect an external MIDI piano.
+    * Added an instrument drop-down.
+
+Version 1.0.0.0
+    * Initial release.
