@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>LotRO MIDI Player</title>
+<style>
+body {
+	font-family: Calibri, Arial, Helvetica, sans-serif;
+	color: white;
+	background-color: black;
+	line-height: 1.3em;
+	padding: 0px;
+	margin: 0px;
+	text-align: center;
+}
+
+div#mainBody {
+	width: 800px;
+	padding: 4px;
+	text-align: left;
+	background-image:url('header.png');
+	background-repeat:no-repeat;
+	padding-top:200px;
+}
+
+h1 {
+	margin: 0px;
+	padding: 0px;
+	text-align: center;
+}
+
+h2 {
+	font-size: 2.2em;
+	border-bottom: 1px solid #B7D3F5;
+	color: #B7D3F5;
+	margin-bottom: 2px;
+	margin-bottom: 8px;
+	padding-bottom: 1px;
+}
+
+h3 {
+	color: #B7D3F5;
+	margin-bottom: 2px;
+}
+
+ul {
+	margin-top: 0px;
+}
+
+a {
+	color: #DFDFFF;
+}
+
+a:hover, a:active {
+	color: #F3E0AA;
+}
+
+div#copyright {
+	font-size: smaller;
+	line-height: 1em;
+	text-align: center;
+	margin-bottom: 10px;
+}
+</style>
+</head>
+
+<body><center>
+<div id="mainBody">
+
+<h2>How to download</h2>
+<h3>Step 1: Install Java</h3>
+<a href="http://www.java.com/en/download/installed.jsp?detect=jre&try=1" target="_blank">Verify your Java installation</a><br />
+LotRO MIDI Player uses Java Web Start.  You must have Java 6.0 or greater installed.
+
+<h3>Step 2: Download using Java Web Start</h3>
+<a href="lotromusic.jnlp">Download and Install LotRO MIDI Player</a><br />
+Clicking the link to download, install, and run LotRO MIDI Player.  The program is signed by me (Digero).  It will put an icon on your desktop so you don't have to come back to this web site each time you want to use the program.<br />
+Note: if you'd like a better-looking icon for your desktop shortcut, you can download <a href="lotromusic.ico">lotromusic.ico</a> and set it as the shortcut's icon.
+
+<h3>Step 3: Configure LotRO</h3>
+You must have a keyboard key mapped to each of the notes in the game.  It tends to work best if none of the keys are mapped with Shift, Ctrl, or Alt modifiers. LotRO MIDI player will automatically determine your key mappings; however, if you change your keyboard mapping while the program is running, you must select "Reload Key Mappings" from the Edit menu.
+
+
+<h2>How to Use</h2>
+You can start the program either by clicking the link above or double-clicking the shortcut on your desktop.<br />
+You MUST be in music mode when you press play or bad things will happen! Do not try to type using the in-game chat box while playing music.
+
+<h3>Opening songs</h3>
+The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO MIDI Player window.  You can also open a MIDI file from the file menu.
+<img src="screenshot.png" style="float:right; padding:6px;" />
+
+<h3>Track List</h3>
+Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece.
+
+<h3>Local preview mode</h3> When this is enabled, the song will be played using the computer's MIDI synthesizer rather than in-game.  Use this to help figure out which tracks should be turned on and off for complicated songs.  Note: If you can't hear any music when Local Preview Mode is enabled, try turning up the "MIDI Synth" volume in the system volume control panel.  Windows Media Player seems to set the MIDI Synth volume to 0 if you pause a MIDI file.
+
+<h3>Transpose</h3> Set the number of half-steps to transpose the notes in the song.  This will help move the song to fit within the LotRO instruments' 3 octaves of range.  Any notes that still fall outside of the instrument's range will be automatically transposed up or down by a full octave so that they can still be played.
+
+<h3>Type text in the game</h3>
+Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game.  To work around this, you can type using this text box.  It will safely type the message into the game for you when you press Enter or click Send.
+
+<h3>Tips</h3>
+<ul>
+<li>Try to find MIDI files that were arranged for the piano or guitar. These sound the best when played on the lute.</li>
+<li>If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.</li>
+<li>Stringed instruments (Lute, Harp, Theorbo) sound the best.  Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent, but I still need to do some more work to fully support them. Drums and Cowbell are NOT supported.</li>
+</ul>
+
+<hr />
+<div style="text-align:right">Created by Digero of Landroval<br /><img src="email.png" /></div><br />
+<div id="copyright">
+	&copy; 2008 acasylum.com<br />
+	The Lord of the Rings Online&trade;: Shadows of Angmar&trade; is a trademark of Turbine, Inc.<br />
+	This site is not affiliated with nor endorsed by Turbine, Inc.<br>
+	Visit the <a href="http://www.lotro.com/">Lord of the Rings Online&trade;</a> home page.
+</div>
+</div>
+</center></body>
+</html>

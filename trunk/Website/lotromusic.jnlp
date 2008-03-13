@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.6+" codebase="http://acasylum.com/lotro/midi/" href="lotromusic.jnlp">
+  <information>
+    <title>LotRO MIDI Player</title>
+    <vendor>Digero</vendor>
+    <homepage href=""/>
+    <description>Plays MIDI files in the Lord of the Rings: Online game.</description>
+    <icon href="icons/icn_64.png"/>
+    <icon href="splash.png" kind="splash"/>
+    <offline-allowed/>
+    <shortcut online="true">
+      <desktop/>
+      <menu submenu="LotRO MIDI Player"/>
+    </shortcut>
+  </information>
+  <security>
+      <all-permissions/>
+  </security>
+  <resources>
+    <j2se version="1.6"/>
+    <jar href="lotromusic.jar"/>
+    <nativelib href="lotromusic_dll.jar"/>
+  </resources>
+  <application-desc main-class="com.digero.lotromusic.LotroMusicMain"></application-desc>
+</jnlp>
