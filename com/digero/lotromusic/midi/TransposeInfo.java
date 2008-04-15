@@ -93,7 +93,9 @@ public class TransposeInfo {
 		bestTranspose = 0;
 		int bestMissed = totalNoteCount;
 
-		for (int tp = Math.max(0, low - lowestNote); tp >= Math.min(0, high - highestNote); tp--) {
+		int maxTp = Math.max(0, low - lowestNote);
+		int minTp = Math.min(0, high - highestNote);
+		for (int tp = maxTp; tp >= minTp; tp--) {
 			int missed = noteCounts[low - tp] + 2 * (totalNoteCount - noteCounts[high - tp]);
 
 			if (missed + Math.abs(tp) < bestMissed + Math.abs(bestTranspose)) {

@@ -257,6 +257,7 @@ import java.lang.reflect.*;
  * @author  Daniel E. Barbalace
  */
 
+@SuppressWarnings({ "unchecked", "serial" })
 public class TableLayout implements
     java.awt.LayoutManager2,
     java.io.Serializable,

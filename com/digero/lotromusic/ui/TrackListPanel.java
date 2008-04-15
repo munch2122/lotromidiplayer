@@ -47,8 +47,10 @@ import com.digero.lotromusic.ui.events.TrackMuteListener;
 
 @SuppressWarnings("serial")
 public class TrackListPanel extends JPanel implements TableLayoutConstants {
+	public static final int ROW_HEIGHT = 18;
+	
 	private Map<Integer, JCheckBox> checkBoxes = new HashMap<Integer, JCheckBox>();
-	private String songFileName = "";
+	//private String songFileName = "";
 
 	private List<TrackMuteListener> trackMuteListeners = new ArrayList<TrackMuteListener>();
 
@@ -109,30 +111,30 @@ public class TrackListPanel extends JPanel implements TableLayoutConstants {
 
 		int row = 0;
 
-		String songTitle;
-		// if (trackInfo[0].noteCount == 0 && trackInfo[0].name != null) {
-		// // Probably the song title
-		// songTitle = trackInfo[0].name;
-		// }
-		// else {
-		songTitle = songFileName;
-		int idx = songTitle.lastIndexOf('.');
-		if (idx > 0) {
-			songTitle = songTitle.substring(0, idx);
-		}
-		// }
-
-		layout.insertRow(0, 4);
-		layout.insertRow(1, PREFERRED);
-		JLabel title = new JLabel(songTitle);
-		title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
-		add(title, "1, 1, " + (layout.getNumColumn() - 1) + ", 1");
-		layout.insertRow(2, 4);
-		row += 3;
+//		String songTitle;
+//		// if (trackInfo[0].noteCount == 0 && trackInfo[0].name != null) {
+//		// // Probably the song title
+//		// songTitle = trackInfo[0].name;
+//		// }
+//		// else {
+//		songTitle = songFileName;
+//		int idx = songTitle.lastIndexOf('.');
+//		if (idx > 0) {
+//			songTitle = songTitle.substring(0, idx);
+//		}
+//		// }
+//
+//		layout.insertRow(0, 4);
+//		layout.insertRow(1, PREFERRED);
+//		JLabel title = new JLabel(songTitle);
+//		title.setFont(title.getFont().deriveFont(Font.BOLD, 18f));
+//		add(title, "1, 1, " + (layout.getNumColumn() - 1) + ", 1");
+//		layout.insertRow(2, 4);
+//		row += 3;
 
 		for (int i = 0; i < trackInfo.length; i++) {
 			if (trackInfo[i].noteCount != 0) {
-				layout.insertRow(row, 18);
+				layout.insertRow(row, ROW_HEIGHT);
 
 				String name = i + ". " + trackInfo[i].getInstrumentNames();
 				JCheckBox checkBox = new JCheckBox(name, !seq.getTrackMute(i));

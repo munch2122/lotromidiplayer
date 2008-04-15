@@ -20,6 +20,7 @@ package net.iharder.dnd;
  * @author rharder@usa.net
  * @version 1.1
  */
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class FileDropBean implements java.io.Serializable {
 
 	private javax.swing.event.EventListenerList listenerList = new javax.swing.event.EventListenerList();

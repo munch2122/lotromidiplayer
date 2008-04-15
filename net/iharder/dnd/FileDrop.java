@@ -45,6 +45,7 @@ import java.io.Reader;
  * @author rharder@users.sf.net
  * @version 1.0.1
  */
+@SuppressWarnings({ "deprecation", "unchecked", "unused", "serial" })
 public class FileDrop {
 	private transient javax.swing.border.Border normalBorder;
 	private transient java.awt.dnd.DropTargetListener dropListener;
@@ -615,7 +616,7 @@ public class FileDrop {
 		}); // end FileDrop.Listener
 
 		frame.setBounds(100, 100, 300, 400);
-		frame.setDefaultCloseOperation(frame.EXIT_ON_CLOSE);
+		frame.setDefaultCloseOperation(javax.swing.JFrame.EXIT_ON_CLOSE);
 		frame.show();
 	} // end main
 

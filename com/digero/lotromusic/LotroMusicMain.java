@@ -22,21 +22,63 @@
 
 package com.digero.lotromusic;
 
+import java.io.File;
+
+import javax.jnlp.ServiceManager;
+import javax.jnlp.SingleInstanceListener;
+import javax.jnlp.SingleInstanceService;
+import javax.jnlp.UnavailableServiceException;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import com.digero.lotromusic.ui.MainWindow;
 
 public class LotroMusicMain {
+	private static SingleInstanceService sis = null;
+	private static SingleInstanceListener sil = new SISListener();
+	private static MainWindow mainWindow = null;
+
 	public static void main(String[] args) {
+		try {
+			sis = (SingleInstanceService) ServiceManager.lookup("javax.jnlp.SingleInstanceService");
+			sis.addSingleInstanceListener(sil);
+			Runtime.getRuntime().addShutdownHook(new Thread() {
+				@Override
+				public void run() {
+					if (sis != null) {
+						sis.removeSingleInstanceListener(sil);
+					}
+				}
+			});
+		}
+		catch (UnavailableServiceException e) {
+			sis = null;
+		}
+
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (Exception e) {}
+		catch (Exception e) {
+		}
 
-		MainWindow w = new MainWindow();
-		w.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		File fileToOpen = null;
+		if (args.length > 0) {
+			fileToOpen = new File(args[0]);
+		}
 
-		w.setVisible(true);
+		mainWindow = new MainWindow(fileToOpen);
+		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		mainWindow.setVisible(true);
+	}
+
+	private static class SISListener implements SingleInstanceListener {
+		public void newActivation(String[] args) {
+			if (args.length > 0) {
+				File fileToOpen = new File(args[0]);
+				mainWindow.openSong(fileToOpen);
+			}
+			mainWindow.toFront();
+		}
 	}
 }
