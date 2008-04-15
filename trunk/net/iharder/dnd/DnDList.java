@@ -20,7 +20,7 @@ package net.iharder.dnd;
  * @version 1.1
  */
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class DnDList extends javax.swing.JList implements java.awt.dnd.DropTargetListener,
 		java.awt.dnd.DragSourceListener, java.awt.dnd.DragGestureListener {
 

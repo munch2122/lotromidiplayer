@@ -42,10 +42,10 @@ public class LotroMidiReceiver implements Receiver {
 	public static final int MAX_POLYPHONY = 3;
 	private static final int ALL_NOTES_OFF = 0x7B;
 
-	private int hWnd;
+	private int hWnd = 0;
 	private int transpose;
 	private boolean unfocusAfterNote = false;
-	private MusicKeymap map = new MusicKeymap();
+	private MusicKeymap map = null;
 	private Queue<KeyInfo> keysDown = new LinkedList<KeyInfo>();
 	private Receiver midiReceiver;
 	private boolean localPreviewMode;
@@ -60,7 +60,6 @@ public class LotroMidiReceiver implements Receiver {
 
 	public LotroMidiReceiver(int transpose) {
 		this.transpose = transpose;
-		resetHWnd();
 		try {
 			midiReceiver = MidiSystem.getReceiver();
 		}
@@ -113,6 +112,9 @@ public class LotroMidiReceiver implements Receiver {
 	}
 
 	public MusicKeymap getKeyMap() {
+		if (map == null) {
+			map = new MusicKeymap();
+		}
 		return map;
 	}
 
@@ -210,7 +212,7 @@ public class LotroMidiReceiver implements Receiver {
 					}
 				}
 
-				KeyInfo kbdKey = map.getKey(note);
+				KeyInfo kbdKey = getKeyMap().getKey(note);
 
 				if (kbdKey != null) {
 					if (cmd == ShortMessage.NOTE_ON && speed > 0) {

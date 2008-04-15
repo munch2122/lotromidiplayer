@@ -28,7 +28,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +57,7 @@ public class MusicKeymap {
 
 		File file = new File(WinApi.GetMyDocumentsPath()
 				+ "\\The Lord of the Rings Online\\lotro.keymap");
+		System.out.println(file.getPath());
 
 		if (file.exists()) {
 			Pattern parser = Pattern.compile("MUSIC_([A-G]b?[1-5]) *\\[[ A-Za-z_]*"
@@ -89,8 +89,11 @@ public class MusicKeymap {
 					modifiers = Integer.parseInt(m.group(3), 16);
 
 				KeyInfo keyInfo = new KeyInfo(scanCode, modifiers);
-				map.put(note, keyInfo);
-				intMap.put(note.id, keyInfo);
+				KeyInfo prev = map.get(note);
+				if (prev == null || keyInfo.getModifiers() == KeyInfo.DX_NONE) {
+					map.put(note, keyInfo);
+					intMap.put(note.id, keyInfo);
+				}
 			}
 			lastReadError = "";
 			loaded = true;
@@ -132,8 +135,15 @@ public class MusicKeymap {
 		if (map == null)
 			load();
 
-		for (Entry<Note, KeyInfo> entry : map.entrySet()) {
-			System.out.println(entry.getKey() + ": \t" + entry.getValue());
+		for (Note note : Note.values()) {
+			KeyInfo info = map.get(note);
+			if (info != null || !note.isAccented) {
+				System.out.println(note + ": \t" + map.get(note));
+			}
 		}
+
+		// for (Entry<Note, KeyInfo> entry : map.entrySet()) {
+		// System.out.println(entry.getKey() + ": \t" + entry.getValue());
+		// }
 	}
 }

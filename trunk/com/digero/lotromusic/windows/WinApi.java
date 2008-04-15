@@ -31,6 +31,8 @@ import com.digero.lotromusic.keyboard.KeyInfo;
 
 public class WinApi {
 	static {
+		System.out.println("Loading WinApi");
+		
 		try {
 			System.loadLibrary("JavaWinApi");
 		}
@@ -109,9 +111,23 @@ public class WinApi {
 			}
 
 			{
-				int vk = WinApi.MapVirtualKey(info.getScanCode().value, WinApi.MAPVK_VSC_TO_VK);
+				int vk = MapVirtualKey(info.getScanCode().value, MAPVK_VSC_TO_VK);
 				int lParam = (info.getScanCode().value << 16) | 1;
 				PostMessage(hWnd, WM_KEYDOWN, vk, lParam);
+			}
+
+			// Release modifier keys right away
+			if ((info.getModifiers() & KeyInfo.DX_CTRL) != 0) {
+				int lParam = (DxScanCode.DIK_LCONTROL.value << 16) | 0xC0000001;
+				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_CONTROL, lParam);
+			}
+			if ((info.getModifiers() & KeyInfo.DX_ALT) != 0) {
+				int lParam = (DxScanCode.DIK_LALT.value << 16) | 0xC0000001;
+				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_ALT, lParam);
+			}
+			if ((info.getModifiers() & KeyInfo.DX_SHIFT) != 0) {
+				int lParam = (DxScanCode.DIK_LSHIFT.value << 16) | 0xC0000001;
+				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_SHIFT, lParam);
 			}
 
 			if (setFocus) {
@@ -127,23 +143,23 @@ public class WinApi {
 			}
 
 			{
-				int vk = WinApi.MapVirtualKey(info.getScanCode().value, WinApi.MAPVK_VSC_TO_VK);
+				int vk = MapVirtualKey(info.getScanCode().value, MAPVK_VSC_TO_VK);
 				int lParam = (info.getScanCode().value << 16) | 0xC0000001;
 				PostMessage(hWnd, WM_KEYUP, vk, lParam);
 			}
 
-			if ((info.getModifiers() & KeyInfo.DX_CTRL) != 0) {
-				int lParam = (DxScanCode.DIK_LCONTROL.value << 16) | 0xC0000001;
-				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_CONTROL, lParam);
-			}
-			if ((info.getModifiers() & KeyInfo.DX_ALT) != 0) {
-				int lParam = (DxScanCode.DIK_LALT.value << 16) | 0xC0000001;
-				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_ALT, lParam);
-			}
-			if ((info.getModifiers() & KeyInfo.DX_SHIFT) != 0) {
-				int lParam = (DxScanCode.DIK_LSHIFT.value << 16) | 0xC0000001;
-				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_SHIFT, lParam);
-			}
+//			if ((info.getModifiers() & KeyInfo.DX_CTRL) != 0) {
+//				int lParam = (DxScanCode.DIK_LCONTROL.value << 16) | 0xC0000001;
+//				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_CONTROL, lParam);
+//			}
+//			if ((info.getModifiers() & KeyInfo.DX_ALT) != 0) {
+//				int lParam = (DxScanCode.DIK_LALT.value << 16) | 0xC0000001;
+//				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_ALT, lParam);
+//			}
+//			if ((info.getModifiers() & KeyInfo.DX_SHIFT) != 0) {
+//				int lParam = (DxScanCode.DIK_LSHIFT.value << 16) | 0xC0000001;
+//				PostMessage(hWnd, WM_KEYUP, KeyEvent.VK_SHIFT, lParam);
+//			}
 
 			if (setFocus) {
 				SendFocusMessage(hWnd, false);

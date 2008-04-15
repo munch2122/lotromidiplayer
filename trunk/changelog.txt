@@ -1,7 +1,16 @@
+Todo
+    * Extend zero-length notes to be 1/32nd notes.
+
 Version 1.1.0.1
     * Export to ABC respects the currently selected instrument's lowest-playable note.
     * Export to ABC now shouldn't allow chords with more than 6 notes.
     * Fixed the occasional "unexpected token" error in some exported ABC files.
+    * The name of the exported ABC file saves on a per-song basis.
+    * Added an "Always play game sound in background" option. With this enabled, LotRO will always think 
+      it's the active window, even if another window has focus. Note: this option will cause your computer 
+      to feel sluggish when LotRO is running in the background.
+    * The program now attempts to use the key mapping without Ctrl/Alt modifiers if there is an option.
+    * Fixed a bug when playing notes with Ctrl/Alt modifiers that would cause the wrong note to be played.
 
 Version 1.1.0.0
     * Added the ability to export to ABC files.

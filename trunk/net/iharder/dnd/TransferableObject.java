@@ -55,6 +55,7 @@ package net.iharder.dnd;
  * @copyright 2001
  * @version 1.1
  */
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class TransferableObject implements java.awt.datatransfer.Transferable {
 	/**
 	 * The MIME type for {@link #DATA_FLAVOR} is

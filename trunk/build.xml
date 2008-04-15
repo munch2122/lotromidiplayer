@@ -18,7 +18,7 @@
 
 		<jar jarfile="${LotroMusic.location}/Website/lotromusic.jar" basedir="${LotroMusic.location}" 
 			includes="**/*.class,**/*.png" 
-			excludes="*.*,.*/**,Website/**,**/*-fw.png,**/MacroSkillsMain.class">
+			excludes="*.*,.*/**,Website/**,**/*-fw.png">
 			<manifest>
 				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicMain" />
 			</manifest>

@@ -17,6 +17,7 @@ package net.iharder.dnd;
  * @author rharder@usa.net
  * @version 1.1
  */
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class FileDropEvent extends java.util.EventObject {
 
 	private java.io.File[] files;

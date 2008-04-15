@@ -5,6 +5,7 @@ import java.beans.MethodDescriptor;
 import java.beans.PropertyDescriptor;
 import java.beans.SimpleBeanInfo;
 
+@SuppressWarnings({ "unchecked", "unused", "serial" })
 public class FileDropBeanBeanInfo extends SimpleBeanInfo {
 
 	// Properties information will be obtained from
