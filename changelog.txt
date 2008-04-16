@@ -10,7 +10,7 @@ Version 1.1.0.1
       it's the active window, even if another window has focus. Note: this option will cause your computer 
       to feel sluggish when LotRO is running in the background.
     * The program now attempts to use the key mapping without Ctrl/Alt modifiers if there is an option.
-    * Fixed a bug when playing notes with Ctrl/Alt modifiers that would cause the wrong note to be played.
+    * Fixed a bug when playing simultaneous notes with Ctrl/Alt modifiers that would cause the wrong note to be played.
 
 Version 1.1.0.0
     * Added the ability to export to ABC files.
