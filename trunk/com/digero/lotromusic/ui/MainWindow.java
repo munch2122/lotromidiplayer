@@ -48,6 +48,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -84,6 +85,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 import javax.swing.border.TitledBorder;
@@ -752,6 +754,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
 		JMenuItem openMenuItem = fileMenu.add(new JMenuItem("Open MIDI File...", KeyEvent.VK_O));
+		openMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int result = fileChooser.showOpenDialog(MainWindow.this);
@@ -762,6 +766,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		});
 
 		exportAbcMenuItem = fileMenu.add(new JMenuItem("Export to ABC...", KeyEvent.VK_E));
+		exportAbcMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
+				InputEvent.CTRL_DOWN_MASK));
 		exportAbcMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportAbc();
@@ -784,6 +790,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		fileMenu.addSeparator();
 
 		JMenuItem exitMenuItem = fileMenu.add(new JMenuItem("Exit", KeyEvent.VK_X));
+		exitMenuItem.setAccelerator(KeyStroke
+				.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
