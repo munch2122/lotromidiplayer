@@ -3,69 +3,23 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 <title>LotRO MIDI Player</title>
-<style>
-body {
-	font-family: Calibri, Arial, Helvetica, sans-serif;
-	color: white;
-	background-color: black;
-	line-height: 1.3em;
-	padding: 0px;
-	margin: 0px;
-	text-align: center;
-}
-
-div#mainBody {
-	width: 800px;
-	padding: 4px;
-	text-align: left;
-	background-image:url('header.png');
-	background-repeat:no-repeat;
-	padding-top:200px;
-}
-
-h1 {
-	margin: 0px;
-	padding: 0px;
-	text-align: center;
-}
-
-h2 {
-	font-size: 2.2em;
-	border-bottom: 1px solid #B7D3F5;
-	color: #B7D3F5;
-	margin-bottom: 2px;
-	margin-bottom: 8px;
-	padding-bottom: 1px;
-}
-
-h3 {
-	color: #B7D3F5;
-	margin-bottom: 2px;
-}
-
-ul {
-	margin-top: 0px;
-}
-
-a {
-	color: #DFDFFF;
-}
-
-a:hover, a:active {
-	color: #F3E0AA;
-}
-
-div#copyright {
-	font-size: smaller;
-	line-height: 1em;
-	text-align: center;
-	margin-bottom: 10px;
-}
-</style>
+<link href="style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+downloadOn = new Image(416, 56);
+downloadOn.src = "download_on.png";
+</script>
 </head>
 
 <body><center>
 <div id="mainBody">
+
+<h2>Features</h2>
+<ul>
+<li>Play MIDI songs with the Lord of the Rings online <a href="http://lorebook.lotro.com/wiki/Mechanics:Player_Music_System">Player Music System</a>.</li>
+<li>Export MIDI songs into <a href="http://lorebook.lotro.com/wiki/Mechanics:ABC_Notation">ABC files</a> to share with others, or make multi-part versions of the original song to play with a group of friends.</li>
+<li>Connect an external MIDI piano as an alternative to using your computer keyboard.</li>
+<li>No configuration files are necessary! LotRO MIDI Player automatically detects your key mappings.</li>
+</ul>
 
 <h2>How to download</h2>
 <h3>Step 1: Install Java</h3>
@@ -73,13 +27,16 @@ div#copyright {
 LotRO MIDI Player uses Java Web Start.  You must have Java 6.0 or greater installed.
 
 <h3>Step 2: Download using Java Web Start</h3>
-<a href="lotromusic.jnlp">Download and Install LotRO MIDI Player</a><br />
-Clicking the link to download, install, and run LotRO MIDI Player.  The program is signed by me (Digero).  It will put an icon on your desktop so you don't have to come back to this web site each time you want to use the program.<br />
+<a href="lotromusic.jnlp.php"><img src="download.png" onmouseover="this.src='download_on.png'" onmouseout="this.src='download.png'" border="0" title="Download and Install LotRO MIDI Player" alt="Download and Install LotRO MIDI Player" /></a><br />
+Current version: 1.1.0.1. <a href="changelog.html">See version history</a>.<br />
+Click the link to download, install, and run LotRO MIDI Player.  The program is signed by me (Digero).  It will put an icon on your desktop so you don't have to come back to this web site each time you want to use the program.<br />
 Note: if you'd like a better-looking icon for your desktop shortcut, you can download <a href="lotromusic.ico">lotromusic.ico</a> and set it as the shortcut's icon.
 
 <h3>Step 3: Configure LotRO</h3>
 You must have a keyboard key mapped to each of the notes in the game.  It tends to work best if none of the keys are mapped with Shift, Ctrl, or Alt modifiers. LotRO MIDI player will automatically determine your key mappings; however, if you change your keyboard mapping while the program is running, you must select "Reload Key Mappings" from the Edit menu.
 
+<h3>Give feedback</h3>
+Visit the <a href="http://forums.lotro.com/showthread.php?t=121331">discussion thread</a> on the LotRO Forums for support or to give feedback.
 
 <h2>How to Use</h2>
 You can start the program either by clicking the link above or double-clicking the shortcut on your desktop.<br />
@@ -87,27 +44,42 @@ You MUST be in music mode when you press play or bad things will happen! Do not 
 
 <h3>Opening songs</h3>
 The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO MIDI Player window.  You can also open a MIDI file from the file menu.
-<img src="screenshot.png" style="float:right; padding:6px;" />
-
-<h3>Track List</h3>
-Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece.
-
-<h3>Local preview mode</h3> When this is enabled, the song will be played using the computer's MIDI synthesizer rather than in-game.  Use this to help figure out which tracks should be turned on and off for complicated songs.  Note: If you can't hear any music when Local Preview Mode is enabled, try turning up the "MIDI Synth" volume in the system volume control panel.  Windows Media Player seems to set the MIDI Synth volume to 0 if you pause a MIDI file.
-
-<h3>Transpose</h3> Set the number of half-steps to transpose the notes in the song.  This will help move the song to fit within the LotRO instruments' 3 octaves of range.  Any notes that still fall outside of the instrument's range will be automatically transposed up or down by a full octave so that they can still be played.
-
-<h3>Type text in the game</h3>
-Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game.  To work around this, you can type using this text box.  It will safely type the message into the game for you when you press Enter or click Send.
 
 <h3>Tips</h3>
 <ul>
 <li>Try to find MIDI files that were arranged for the piano or guitar. These sound the best when played on the lute.</li>
 <li>If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.</li>
-<li>Stringed instruments (Lute, Harp, Theorbo) sound the best.  Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent, but I still need to do some more work to fully support them. Drums and Cowbell are NOT supported.</li>
+<li>Stringed instruments (Lute, Harp, Theorbo) sound the best.  Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent. Drums and Cowbell are NOT supported.</li>
 </ul>
+<img src="screenshot.png" style="float:right; padding:6px;" />
 
-<hr />
-<div style="text-align:right">Created by Digero of Landroval<br /><img src="email.png" /></div><br />
+<h3>Track List</h3>
+Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece.
+
+<h3>MIDI preview mode</h3>
+When this is enabled, the song will be played using the computer's MIDI synthesizer rather than in-game.  Use this to help figure out which tracks should be turned on and off for complicated songs.  Note: If you can't hear any music when Local Preview Mode is enabled, try turning up the "MIDI Synth" volume in the system volume control panel.  Windows Media Player seems to set the MIDI Synth volume to 0 if you use it to play a MIDI file.
+
+<h3>Transpose</h3>
+Set the number of half-steps to transpose the notes in the song.  This will help move the song to fit within the LotRO instruments' three-octave of range.  Any notes that still fall outside of the instrument's range will be automatically transposed up or down by a full octave so that they can still be played.
+
+<h3>Instrument</h3>
+Select which instrument you'll be using in-game, or for which instrument the ABC export is intended.  This will make sure that the "breath" sound isn't used for the horn and clarinet.
+
+<h3>Type text in the game</h3>
+Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game.  To work around this, you can type using this text box.  It will safely type the message into the game for you when you press Enter or click Send.
+
+<h3>Exporting to ABC</h3>
+To export to an ABC file, choose the option from the File menu.  If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on.  You may want to change the title between exports to add information about the part (e.g. " - Lute").
+
+<h3>Connect MIDI Piano</h3>
+<img src="mididevice_screenshot.png" style="float:left; padding: 2px 10px 6px 2px;" width="311" height="222" />
+Select "Connect MIDI Piano..." from the main window's File menu.<br />
+<br />
+If your device isn't listed, make sure it's connected and turned on.  If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.<br />
+
+
+<br clear="all" />
+<div id="footer">Created by Digero of Landroval<br /><img src="email.png" /></div><br />
 <div id="copyright">
 	&copy; 2008 acasylum.com<br />
 	The Lord of the Rings Online&trade;: Shadows of Angmar&trade; is a trademark of Turbine, Inc.<br />
