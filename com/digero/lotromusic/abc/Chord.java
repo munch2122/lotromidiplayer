@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Chord {
+	public static final int MAX_CHORD_NOTES = 6;
+
 	private long startMicros;
 	private long endMicros;
 	private List<NoteEvent> notes = new ArrayList<NoteEvent>();
@@ -55,13 +57,42 @@ class Chord {
 		return notes.get(i);
 	}
 
-	public void add(NoteEvent ne) {
-		if (size() >= 6)
-			return;
+	public boolean add(NoteEvent ne, boolean force) {
+		while (force && size() >= MAX_CHORD_NOTES) {
+			remove(size() - 1);
+		}
+		return add(ne);
+	}
+
+	public boolean add(NoteEvent ne) {
+		if (ne.getLength() == 0) {
+			return false;
+		}
+
+		if (size() >= MAX_CHORD_NOTES) {
+			return false;
+		}
 
 		notes.add(ne);
 		if (ne.endMicros < endMicros) {
 			endMicros = ne.endMicros;
 		}
+		return true;
+	}
+
+	public NoteEvent remove(int i) {
+		if (size() <= 1)
+			return null;
+
+		NoteEvent ne = notes.remove(i);
+		if (ne.endMicros == this.endMicros) {
+			this.endMicros = notes.get(0).endMicros;
+			for (int k = 1; k < notes.size(); k++) {
+				if (notes.get(k).endMicros < endMicros) {
+					this.endMicros = notes.get(k).endMicros;
+				}
+			}
+		}
+		return ne;
 	}
 }
