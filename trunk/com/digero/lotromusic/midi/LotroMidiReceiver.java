@@ -35,7 +35,6 @@ import javax.sound.midi.ShortMessage;
 import com.digero.lotromusic.keyboard.KeyInfo;
 import com.digero.lotromusic.keyboard.MusicKeymap;
 import com.digero.lotromusic.keyboard.Note;
-import com.digero.lotromusic.ui.MainWindow;
 import com.digero.lotromusic.windows.WinApi;
 
 public class LotroMidiReceiver implements Receiver {
@@ -220,8 +219,6 @@ public class LotroMidiReceiver implements Receiver {
 						if (t.getPriority() != 3) {
 							t.setPriority(3);
 						}
-
-						MainWindow.printThreadInfo();
 
 						WinApi.SendFocusMessage(hWnd, true);
 

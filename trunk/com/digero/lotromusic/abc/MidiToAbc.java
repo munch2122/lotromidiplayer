@@ -44,7 +44,6 @@ public class MidiToAbc {
 	public static final int ONE_MINUTE_MICROS = 60000000; // 1 second
 	public static final int SHORTEST_NOTE_MICROS = 62500; // 1/16 second
 	public static final int LONGEST_NOTE_MICROS = 8000000; // 8 seconds
-	public static final int MAX_CHORD_NOTES = 6;
 
 	public static final int META_KEY_SIGNATURE = 0x59;
 	public static final int META_TEMPO = 0x51;
@@ -80,8 +79,8 @@ public class MidiToAbc {
 	 * @param out
 	 *            The ABC file will be written to this stream.
 	 */
-	public static void convert(Sequencer seq, String title, String originalFileName, int transpose,
-			Note lowestNote, Note highestNote, PrintStream out) {
+	public static boolean convert(Sequencer seq, String title, String originalFileName,
+			int transpose, Note lowestNote, Note highestNote, PrintStream out) {
 		StringBuilder sb = new StringBuilder();
 
 		Sequence song = seq.getSequence();
@@ -139,10 +138,6 @@ public class MidiToAbc {
 					lastTempoMicros = micros;
 					lastTempoTick = evt.getTick();
 					tempo = (int) (tempoFromMeta(meta) / seq.getTempoFactor());
-
-					// System.out.print("Tempo Message: ");
-					// System.out.print(Math.round(ONE_MINUTE_MICROS / (float) tempo) + " BPM @ ");
-					// System.out.println(timeToString(Math.round(micros / 1000.0)));
 				}
 			}
 			else if (msg instanceof ShortMessage) {
@@ -205,7 +200,7 @@ public class MidiToAbc {
 
 		if (events.size() == 0) {
 			System.err.println("No events!");
-			return;
+			return false;
 		}
 
 		if (notesOn.size() > 0) {
@@ -235,6 +230,11 @@ public class MidiToAbc {
 		for (NoteEvent ne : events) {
 			ne.startMicros = ((ne.startMicros + shortestNote / 2) / shortestNote) * shortestNote;
 			ne.endMicros = ((ne.endMicros + shortestNote / 2) / shortestNote) * shortestNote;
+
+			// Make sure the note didn't get quantized to zero length
+			if (ne.getLength() == 0) {
+				ne.setLength(shortestNote);
+			}
 		}
 
 		// Add initial rest if necessary
@@ -294,7 +294,6 @@ public class MidiToAbc {
 			notesOn.add(ne);
 		}
 
-		// Very rough estimate: ~2 notes per chord average
 		List<Chord> chords = new ArrayList<Chord>(events.size() / 2);
 
 		// Combine notes that play at the same time into chords
@@ -313,6 +312,13 @@ public class MidiToAbc {
 				// The next chord starts playing immediately after the *shortest* note (or rest) in
 				// the current chord is finished, so we may need to add a rest inside the chord to
 				// shorten it, or a rest after the chord to add a pause.
+
+				if (currentChord.getEndMicros() > nextChord.getStartMicros()) {
+					// Make sure there's room to add the rest
+					while (currentChord.size() >= Chord.MAX_CHORD_NOTES) {
+						currentChord.remove(currentChord.size() - 1);
+					}
+				}
 
 				if (currentChord.getEndMicros() > nextChord.getStartMicros()) {
 					// If the chord is too long, add a short rest in the chord to shorten it
@@ -359,7 +365,7 @@ public class MidiToAbc {
 			}
 
 			int notesWritten = 0;
-			for (int j = 0; j < c.size() && notesWritten < MAX_CHORD_NOTES; j++) {
+			for (int j = 0; j < c.size(); j++) {
 				NoteEvent evt = c.get(j);
 				if (evt.getLength() == 0) {
 					System.err.println("Zero-length note");
@@ -430,6 +436,8 @@ public class MidiToAbc {
 		out.println("K: C");
 		out.println();
 		out.print(sb.toString());
+
+		return true;
 	}
 
 	private static int gcd(int a, int b) {

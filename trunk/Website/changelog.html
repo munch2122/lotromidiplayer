@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
@@ -12,18 +13,32 @@
 <h2>Version History</h2>
 See the <a href="index.html">LotRO MIDI Player page</a> for more information.
 
+<h3>Version 1.1.0.2</h3>
+<ul>
+<li>Fixed a bug that caused chords with 6 notes in them to be the incorrect 
+	length, which could mess up the timing of the exported ABC file.</li>
+<li>Fixed a bug where very short notes could mess up the timing of the 
+	exported ABC file.</li>
+</ul>
+
 <h3>Version 1.1.0.1</h3>
 <ul>
-<li>Export to ABC respects the currently selected instrument's lowest-playable note.</li>
+<li>Export to ABC respects the currently selected instrument's lowest-playable 
+	note.</li>
 <li>Export to ABC now shouldn't allow chords with more than 6 notes.</li>
-<li>Fixed the occasional "unexpected token" error in some exported ABC files.</li>
+<li>Fixed the occasional "unexpected token" error in some exported ABC 
+	files.</li>
 <li>The name of the exported ABC file saves on a per-song basis.</li>
-<li>Added an "Always play game sound in background" option. With this enabled, LotRO will always think 
-	it's the active window, even if another window has focus. <i>Note: this option will cause your computer 
-	to feel sluggish when LotRO is running in the background.</i></li>
-<li>The program now attempts to use the key mapping without Ctrl/Alt modifiers if there is an option.</li>
-<li>Fixed a bug when playing simultaneous notes with Ctrl/Alt modifiers that would cause the wrong note to be played.</li>
-<li>Added accelerator keys to Open a MIDI file (Ctrl+O) and Export to ABC (Ctrl+S).</li>
+<li>Added an "Always play game sound in background" option. With this enabled, 
+	LotRO will always think it's the active window, even if another window has 
+	focus. <i>Note: this option will cause your computer to feel sluggish when 
+	LotRO is running in the background.</i></li>
+<li>The program now attempts to use the key mapping without Ctrl/Alt modifiers 
+	if there is an option.</li>
+<li>Fixed a bug when playing simultaneous notes with Ctrl/Alt modifiers that 
+	would cause the wrong note to be played.</li>
+<li>Added accelerator keys to Open a MIDI file (Ctrl+O) and Export to ABC 
+	(Ctrl+S).</li>
 </ul>
 
 <h3>Version 1.1.0.0</h3>
@@ -44,9 +59,45 @@ See the <a href="index.html">LotRO MIDI Player page</a> for more information.
 <!-- Begin PayPal Donate Button -->
 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 <input type="hidden" name="cmd" value="_s-xclick">
-<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-<input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----
+<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" 
+	border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" 
+	width="1" height="1">
+<input type="hidden" name="encrypted" value="
+-----BEGIN PKCS7-----
+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
+-----END PKCS7-----
 ">
 </form>
 <!-- End PayPal Donate Button -->
@@ -57,9 +108,11 @@ Created by Digero of Landroval<br /><img src="email.png" />
 </tr></table><br />
 <div id="copyright">
 	&copy; 2008 acasylum.com<br />
-	The Lord of the Rings Online&trade;: Shadows of Angmar&trade; is a trademark of Turbine, Inc.<br />
-	This site is not affiliated with nor endorsed by Turbine, Inc.<br>
-	Visit the <a href="http://www.lotro.com/">Lord of the Rings Online&trade;</a> home page.
+	The Lord of the Rings Online&trade;: Shadows of Angmar&trade; is a 
+		trademark of Turbine, Inc.<br />
+	This site is not affiliated with nor endorsed by Turbine, Inc.<br />
+	Visit the <a href="http://www.lotro.com/">Lord of the Rings 
+		Online&trade;</a> home page.
 </div>
 </div>
 </center></body>

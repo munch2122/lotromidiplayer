@@ -1,5 +1,9 @@
 Todo
-    * Extend zero-length notes to be 1/32nd notes.
+	* Dynamics
+
+Version 1.1.0.2
+	* Fixed a bug that caused chords with 6 notes in them to be the incorrect length, which could mess up the timing for the song.
+    * Fixed a bug where very short notes could mess up the timing of the song.
 
 Version 1.1.0.1
     * Export to ABC respects the currently selected instrument's lowest-playable note.

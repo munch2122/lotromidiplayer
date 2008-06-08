@@ -152,22 +152,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	private ExternalDeviceFrame midiPianoFrame = null;
 
-	private Version version = new Version(1, 1, 0, 1);
-
-	public static void printThreadInfo() {
-		if (false) {
-			StackTraceElement element = new Throwable().getStackTrace()[1];
-			String className = element.getClassName();
-			int dot = className.lastIndexOf('.');
-			if (dot > 0) {
-				className = className.substring(dot + 1);
-			}
-			String methodName = element.getMethodName();
-			System.out.println(Thread.currentThread().getName() + ": "
-					+ Thread.currentThread().getPriority() + " (" + className + "." + methodName
-					+ ")");
-		}
-	}
+	private Version version = new Version(1, 1, 0, 2);
 
 	public MainWindow() {
 		this(null);
@@ -175,7 +160,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	public MainWindow(File fileToOpen) {
 		super("LotRO MIDI Player");
-		MainWindow.printThreadInfo();
 		try {
 			sequencer = MidiSystem.getSequencer(false);
 			sequencer.open();
@@ -352,7 +336,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		playButton.setEnabled(false);
 		playButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				printThreadInfo();
 				playPause();
 			}
 		});
@@ -361,7 +344,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		stopButton.setEnabled(false);
 		stopButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				printThreadInfo();
 				stop();
 			}
 		});
@@ -447,7 +429,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			}
 		});
 
-		// TODO
 		soundTimer = new Timer(1000, new ActionListener() {
 			long lastResetMillis = 0;
 
@@ -495,9 +476,9 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			public void actionPerformed(ActionEvent e) {
 				if (!sequencer.isRunning()) {
 					// XXX
-					System.out.println("Stopping...");
+					// System.out.println("Stopping...");
 					stop();
-					System.out.println("Stopped");
+					// System.out.println("Stopped");
 				}
 
 				updateTimerLabel();
@@ -558,7 +539,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		settingsPanel.add(new JLabel("Game sound:"), "0, 8");
 		settingsPanel.add(bkgdSoundCheckBox, "1, 8, 3, 8, l, c");
 
-		// TODO
 		// JPanel soundModePanel = new JPanel(new BorderLayout());
 		// soundModePanel.add(new JLabel("Play game sounds in background: "), BorderLayout.WEST);
 		// soundModePanel.add(soundComboBox, BorderLayout.CENTER);
@@ -592,7 +572,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		new DropTarget(this, new MyDropListener());
 
-		// TODO
 		if (fileToOpen != null) {
 			if (fileToOpen.exists()) {
 				openSong(fileToOpen);
@@ -1035,7 +1014,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		bestTransposeButton.setText("Best: " + transposeInfo.getBestTranspose());
 		bestTransposeButton.setEnabled(transposeInfo.getBestTranspose() != lotroReceiver
 				.getTranspose());
-		// XXX
 		updateTransposeText();
 	}
 
