@@ -6,12 +6,36 @@
 <title>LotRO MIDI Player</title>
 <link href="style.css" rel="stylesheet" type="text/css">
 <script type="text/javascript">
-downloadOn = new Image(416, 56);
-downloadOn.src = "download_on.png";
+	function preLoad() {
+		dl_link_on = new Image(384, 64);
+		dl_link_on.src = "download2_on.png";
+	}
+	
+	function swapDlImg(hglt) {
+		var dl_link = document.getElementById('dl_link');
+		
+		var on = hglt ? "_on" : "";
+		dl_link.style.backgroundImage = "url('download2" + on + ".png')";
+	}
 </script>
+
+<style>
+	#dl_link {
+		background-image: url('download2.png');
+		background-repeat: no-repeat;
+		width: 384px;
+		height: 64px;
+		padding-left: 64px;
+		padding-top: 20px;
+		font-size: 28px;
+		font-weight: bold;
+		float: left;
+		cursor: pointer;
+	}
+</style>
 </head>
 
-<body><center>
+<body onload="preLoad();"><center>
 <div id="mainBody">
 
 <h2>Features</h2>
@@ -28,7 +52,14 @@ downloadOn.src = "download_on.png";
 LotRO MIDI Player uses Java Web Start.  You must have Java 6.0 or greater installed.
 
 <h3>Step 2: Download using Java Web Start</h3>
-<a href="lotromusic.jnlp.php"><img src="download.png" onmouseover="this.src='download_on.png'" onmouseout="this.src='download.png'" border="0" title="Download and Install LotRO MIDI Player" alt="Download and Install LotRO MIDI Player" /></a><br />
+
+<a href="lotromusic.jnlp.php">
+<div id="dl_link" onmouseover="swapDlImg(true)" onmouseout="swapDlImg(false)">
+	Run LotRO MIDI Player
+</div>
+</a>
+<br clear="all"/>
+
 Current version: 1.1.0.2. <a href="changelog.html">See version history</a>.<br />
 Click the link to download, install, and run LotRO MIDI Player.  The program is signed by me (Digero).  It will put an icon on your desktop so you don't have to come back to this web site each time you want to use the program.<br />
 Note: if you'd like a better-looking icon for your desktop shortcut, you can download <a href="lotromusic.ico">lotromusic.ico</a> and set it as the shortcut's icon.
