@@ -1,0 +1,17 @@
+#summary Lord of the Rings Online MIDI player and MIDI to ABC converter
+
+= LotRO MIDI Player =
+    * Play MIDI songs with the Lord of the Rings online [http://lorebook.lotro.com/wiki/Mechanics:Player_Music_System Player Music System].
+    * Export MIDI songs into [http://lorebook.lotro.com/wiki/Mechanics:ABC_Notation ABC files] to share with others, or make multi-part versions of the original song to play with a group of friends.
+    * Connect an external MIDI piano as an alternative to using your computer keyboard.
+    * No configuration files are necessary! LotRO MIDI Player automatically detects your key mappings.
+
+[http://lotromidiplayer.googlecode.com/files/LotRO_MIDI_Player.jnlp http://lotromidiplayer.googlecode.com/svn/trunk/Website/download.png] <br />
+_Requires [http://www.java.com/en/download/installed.jsp?detect=jre&try=1 Java 6.0] or greater._
+
+*Give Feedback!* Visit the [http://forums.lotro.com/showthread.php?t=121331 discussion thread] on the LotRO Forums for support or to give feedback.
+
+== User Guide ==
+Read the [UserGuide User Guide] for instructions.
+
+http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot.png
