@@ -1,0 +1,26 @@
+Todo
+	* Dynamics
+
+Version 1.1.0.2
+	* Fixed a bug that caused chords with 6 notes in them to be the incorrect length, which could mess up the timing for the song.
+    * Fixed a bug where very short notes could mess up the timing of the song.
+
+Version 1.1.0.1
+    * Export to ABC respects the currently selected instrument's lowest-playable note.
+    * Export to ABC now shouldn't allow chords with more than 6 notes.
+    * Fixed the occasional "unexpected token" error in some exported ABC files.
+    * The name of the exported ABC file saves on a per-song basis.
+    * Added an "Always play game sound in background" option. With this enabled, LotRO will always think 
+      it's the active window, even if another window has focus. Note: this option will cause your computer 
+      to feel sluggish when LotRO is running in the background.
+    * The program now attempts to use the key mapping without Ctrl/Alt modifiers if there is an option.
+    * Fixed a bug when playing simultaneous notes with Ctrl/Alt modifiers that would cause the wrong note to be played.
+    * Added accelerator keys to Open (Ctrl+O) and Export to ABC (Ctrl+S)
+
+Version 1.1.0.0
+    * Added the ability to export to ABC files.
+    * Added the ability to connect an external MIDI piano.
+    * Added an instrument drop-down.
+
+Version 1.0.0.0
+    * Initial release.

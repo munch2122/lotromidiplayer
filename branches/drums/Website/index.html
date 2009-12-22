@@ -1,0 +1,176 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>LotRO MIDI Player</title>
+<link href="style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript">
+	function preLoad() {
+		dl_link_on = new Image(384, 64);
+		dl_link_on.src = "download2_on.png";
+	}
+	
+	function swapDlImg(hglt) {
+		var dl_link = document.getElementById('dl_link');
+		
+		var on = hglt ? "_on" : "";
+		dl_link.style.backgroundImage = "url('download2" + on + ".png')";
+	}
+</script>
+
+<style>
+	#dl_link {
+		background-image: url('download2.png');
+		background-repeat: no-repeat;
+		width: 384px;
+		height: 64px;
+		padding-left: 64px;
+		padding-top: 20px;
+		font-size: 28px;
+		font-weight: bold;
+		float: left;
+		cursor: pointer;
+	}
+</style>
+</head>
+
+<body onload="preLoad();"><center>
+<div id="mainBody">
+
+<h2>Features</h2>
+<ul>
+<li>Play MIDI songs with the Lord of the Rings online <a href="http://lorebook.lotro.com/wiki/Mechanics:Player_Music_System">Player Music System</a>.</li>
+<li>Export MIDI songs into <a href="http://lorebook.lotro.com/wiki/Mechanics:ABC_Notation">ABC files</a> to share with others, or make multi-part versions of the original song to play with a group of friends.</li>
+<li>Connect an external MIDI piano as an alternative to using your computer keyboard.</li>
+<li>No configuration files are necessary! LotRO MIDI Player automatically detects your key mappings.</li>
+</ul>
+
+<h2>How to download</h2>
+<h3>Step 1: Install Java</h3>
+<a href="http://www.java.com/en/download/installed.jsp?detect=jre&try=1" target="_blank">Verify your Java installation</a><br />
+LotRO MIDI Player uses Java Web Start.  You must have Java 6.0 or greater installed.
+
+<h3>Step 2: Download using Java Web Start</h3>
+
+<a href="lotromusic.jnlp.php">
+<div id="dl_link" onmouseover="swapDlImg(true)" onmouseout="swapDlImg(false)">
+	Run LotRO MIDI Player
+</div>
+</a>
+<br clear="all"/>
+
+Current version: 1.1.0.2. <a href="changelog.html">See version history</a>.<br />
+Click the link to download, install, and run LotRO MIDI Player.  The program is signed by me (Digero).  It will put an icon on your desktop so you don't have to come back to this web site each time you want to use the program.<br />
+Note: if you'd like a better-looking icon for your desktop shortcut, you can download <a href="lotromusic.ico">lotromusic.ico</a> and set it as the shortcut's icon.
+
+<h3>Step 3: Configure LotRO</h3>
+You must have a keyboard key mapped to each of the notes in the game.  It tends to work best if none of the keys are mapped with Shift, Ctrl, or Alt modifiers. LotRO MIDI player will automatically determine your key mappings; however, if you change your keyboard mapping while the program is running, you must select "Reload Key Mappings" from the Edit menu.
+
+<h3>Give feedback</h3>
+Visit the <a href="http://forums.lotro.com/showthread.php?t=121331">discussion thread</a> on the LotRO Forums for support or to give feedback.
+
+<h2>How to Use</h2>
+You can start the program either by clicking the link above or double-clicking the shortcut on your desktop.<br />
+You MUST be in music mode when you press play or bad things will happen! Do not try to type using the in-game chat box while playing music.
+
+<h3>Opening songs</h3>
+The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO MIDI Player window.  You can also open a MIDI file from the file menu.
+
+<h3>Tips</h3>
+<ul>
+<li>Try to find MIDI files that were arranged for the piano or guitar. These sound the best when played on the lute.</li>
+<li>If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.</li>
+<li>Stringed instruments (Lute, Harp, Theorbo) sound the best.  Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent. Drums and Cowbell are NOT supported.</li>
+</ul>
+<img src="screenshot.png" style="float:right; padding:6px;" />
+
+<h3>Track List</h3>
+Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece.
+
+<h3>MIDI preview mode</h3>
+When this is enabled, the song will be played using the computer's MIDI synthesizer rather than in-game.  Use this to help figure out which tracks should be turned on and off for complicated songs.  Note: If you can't hear any music when Local Preview Mode is enabled, try turning up the "MIDI Synth" volume in the system volume control panel.  Windows Media Player seems to set the MIDI Synth volume to 0 if you use it to play a MIDI file.
+
+<h3>Transpose</h3>
+Set the number of half-steps to transpose the notes in the song.  This will help move the song to fit within the LotRO instruments' three-octave of range.  Any notes that still fall outside of the instrument's range will be automatically transposed up or down by a full octave so that they can still be played.
+
+<h3>Instrument</h3>
+Select which instrument you'll be using in-game, or for which instrument the ABC export is intended.  This will make sure that the "breath" sound isn't used for the horn and clarinet.
+
+<h3>Type text in the game</h3>
+Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game.  To work around this, you can type using this text box.  It will safely type the message into the game for you when you press Enter or click Send.
+
+<h3>Exporting to ABC</h3>
+To export to an ABC file, choose the option from the File menu.  If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on.  You may want to change the title between exports to add information about the part (e.g. " - Lute").
+
+<h3>Connect MIDI Piano</h3>
+<img src="mididevice_screenshot.png" style="float:left; padding: 2px 10px 6px 2px;" width="311" height="222" />
+Select "Connect MIDI Piano..." from the main window's File menu.<br />
+<br />
+If your device isn't listed, make sure it's connected and turned on.  If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.<br />
+
+
+<br clear="all" />
+<table id="footer"><tr>
+<td valign="top" align="left">
+<!-- Begin PayPal Donate Button -->
+<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+<input type="hidden" name="cmd" value="_s-xclick">
+<input type="image" src="https://www.paypal.com/en_US/i/btn/x-click-but04.gif" 
+	border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" 
+	width="1" height="1">
+<input type="hidden" name="encrypted" value="
+-----BEGIN PKCS7-----
+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
+-----END PKCS7-----
+">
+</form>
+<!-- End PayPal Donate Button -->
+</td>
+<td valign="top" align="right">
+Created by Digero of Landroval<br /><img src="email.png" />
+</td>
+</tr></table><br />
+<div id="copyright">
+	&copy; 2008 acasylum.com<br />
+	The Lord of the Rings Online&trade;: Shadows of Angmar&trade; is a 
+		trademark of Turbine, Inc.<br />
+	This site is not affiliated with nor endorsed by Turbine, Inc.<br />
+	Visit the <a href="http://www.lotro.com/">Lord of the Rings 
+		Online&trade;</a> home page.
+</div>
+</div>
+</center></body>
+</html>
