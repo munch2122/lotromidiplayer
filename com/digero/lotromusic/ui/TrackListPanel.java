@@ -141,7 +141,7 @@ public class TrackListPanel extends JPanel implements TableLayoutConstants {
 				checkBox.setFont(checkBox.getFont().deriveFont(Font.BOLD));
 				checkBox.setBackground(getBackground());
 				if (trackInfo[i].hasDrums) {
-					checkBox.setForeground(Color.RED);
+					checkBox.setForeground(Color.BLUE);
 				}
 				checkBox.addActionListener(new TrackChangeActionListener(i));
 				checkBoxes.put(i, checkBox);

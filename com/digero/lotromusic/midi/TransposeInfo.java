@@ -38,7 +38,7 @@ public class TransposeInfo {
 	private Note highestPlayable, lowestPlayable;
 
 	public TransposeInfo(Sequencer seq) {
-		this(seq, Note.C2, Note.C5);
+		this(seq, Note.MIN_PLAYABLE, Note.MAX_PLAYABLE);
 	}
 
 	public TransposeInfo(Sequencer seq, Instrument instrument) {

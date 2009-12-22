@@ -23,17 +23,18 @@
 package com.digero.lotromusic.keyboard;
 
 public class Instrument {
-	public static final Instrument LUTE = new Instrument("Lute", Note.C2, Note.C5);
-	public static final Instrument HARP = new Instrument("Harp", Note.C2, Note.C5);
-	public static final Instrument THEORBO = new Instrument("Theorbo", Note.C2, Note.C5);
+	public static final Instrument LUTE = new Instrument("Lute");
+	public static final Instrument HARP = new Instrument("Harp");
+	public static final Instrument THEORBO = new Instrument("Theorbo");
 
-	public static final Instrument FLUTE = new Instrument("Flute", Note.C2, Note.C5);
+	public static final Instrument FLUTE = new Instrument("Flute");
 	public static final Instrument CLARINET = new Instrument("Clarinet", Note.D2, Note.C5);
 	public static final Instrument HORN = new Instrument("Horn", Note.Cs2, Note.C5);
-	public static final Instrument BAGPIPE = new Instrument("Bagpipe", Note.C2, Note.C5);
+	public static final Instrument BAGPIPE = new Instrument("Bagpipe");
 
-	public static final Instrument[] INSTRUMENTS = { LUTE, HARP, THEORBO, BAGPIPE, CLARINET, FLUTE,
-			HORN };
+	public static final Instrument DRUMS = new Instrument("Drums");
+
+	public static final Instrument[] INSTRUMENTS = { LUTE, HARP, THEORBO, BAGPIPE, CLARINET, FLUTE, HORN, DRUMS };
 
 	public final String name;
 	public final Note lowestPlayable;
@@ -48,10 +49,22 @@ public class Instrument {
 		return defaultInstrument;
 	}
 
+	private Instrument(String name) {
+		this(name, Note.MIN_PLAYABLE, Note.MAX_PLAYABLE);
+	}
+
 	private Instrument(String name, Note low, Note high) {
 		this.name = name;
 		this.lowestPlayable = low;
 		this.highestPlayable = high;
+	}
+
+	public boolean isPlayable(Note n) {
+		return isPlayable(n.id);
+	}
+
+	public boolean isPlayable(int id) {
+		return id >= lowestPlayable.id && id <= highestPlayable.id;
 	}
 
 	@Override

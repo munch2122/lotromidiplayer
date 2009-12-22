@@ -56,7 +56,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -429,7 +428,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			}
 		});
 
-		soundTimer = new Timer(1000, new ActionListener() {
+		soundTimer = new Timer(250, new ActionListener() {
 			long lastResetMillis = 0;
 
 			public void actionPerformed(ActionEvent e) {
@@ -1002,7 +1001,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 					JOptionPane.INFORMATION_MESSAGE);
 			out.close();
 		}
-		catch (FileNotFoundException e) {
+		catch (Exception e) {
 			JOptionPane.showMessageDialog(this, "Export failed:\n" + e.getMessage(),
 					"Export Failed", JOptionPane.ERROR_MESSAGE);
 		}

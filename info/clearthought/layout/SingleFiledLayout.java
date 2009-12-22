@@ -48,7 +48,7 @@ import java.awt.*;
  * @version 1.1 April 4, 2002
  * @author  Daniel E. Barbalace
  */
-@SuppressWarnings({ "unchecked", "unused", "serial" })
+@SuppressWarnings({ "serial" })
 public class SingleFiledLayout implements
     java.awt.LayoutManager,
     java.io.Serializable

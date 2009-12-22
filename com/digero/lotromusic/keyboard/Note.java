@@ -22,19 +22,24 @@
 
 package com.digero.lotromusic.keyboard;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum Note {
-	Rest(0),
-	//
-	C2(36), Cs2, Db2(Cs2), D2, Ds2, Eb2(Ds2), E2, F2, Fs2, Gb2(Fs2), G2, Gs2, Ab2(Gs2), A2, As2, Bb2(
-			As2), B2,
-	//
-	C3, Cs3, Db3(Cs3), D3, Ds3, Eb3(Ds3), E3, F3, Fs3, Gb3(Fs3), G3, Gs3, Ab3(Gs3), A3, As3, Bb3(
-			As3), B3,
-	//
-	C4, Cs4, Db4(Cs4), D4, Ds4, Eb4(Ds4), E4, F4, Fs4, Gb4(Fs4), G4, Gs4, Ab4(Gs4), A4, As4, Bb4(
-			As4), B4,
-	//
-	C5;
+	Rest(0), //
+	C0(12), Cs0, Db0(Cs0), D0, Ds0, Eb0(Ds0), E0, F0, Fs0, Gb0(Fs0), G0, Gs0, Ab0(Gs0), A0, As0, Bb0(As0), B0, //
+	C1, Cs1, Db1(Cs1), D1, Ds1, Eb1(Ds1), E1, F1, Fs1, Gb1(Fs1), G1, Gs1, Ab1(Gs1), A1, As1, Bb1(As1), B1, //
+	C2, Cs2, Db2(Cs2), D2, Ds2, Eb2(Ds2), E2, F2, Fs2, Gb2(Fs2), G2, Gs2, Ab2(Gs2), A2, As2, Bb2(As2), B2, //
+	C3, Cs3, Db3(Cs3), D3, Ds3, Eb3(Ds3), E3, F3, Fs3, Gb3(Fs3), G3, Gs3, Ab3(Gs3), A3, As3, Bb3(As3), B3, //
+	C4, Cs4, Db4(Cs4), D4, Ds4, Eb4(Ds4), E4, F4, Fs4, Gb4(Fs4), G4, Gs4, Ab4(Gs4), A4, As4, Bb4(As4), B4, //
+	C5, Cs5, Db5(Cs5), D5, Ds5, Eb5(Ds5), E5, F5, Fs5, Gb5(Fs5), G5, Gs5, Ab5(Gs5), A5, As5, Bb5(As5), B5, //
+	C6, Cs6, Db6(Cs6), D6, Ds6, Eb6(Ds6), E6, F6, Fs6, Gb6(Fs6), G6, Gs6, Ab6(Gs6), A6, As6, Bb6(As6), B6, //
+	C7, Cs7, Db7(Cs7), D7, Ds7, Eb7(Ds7), E7, F7, Fs7, Gb7(Fs7), G7, Gs7, Ab7(Gs7), A7, As7, Bb7(As7), B7, //
+	C8, Cs8, Db8(Cs8), D8, Ds8, Eb8(Ds8), E8, F8, Fs8, Gb8(Fs8), G8, Gs8, Ab8(Gs8), A8, As8, Bb8(As8), B8, //
+	C9, Cs9, Db9(Cs9), D9, Ds9, Eb9(Ds9), E9, F9, Fs9, Gb9(Fs9), G9, Gs9, Ab9(Gs9), A9, As9, Bb9(As9), B9;
+
+	public static final Note MIN_PLAYABLE = C2;
+	public static final Note MAX_PLAYABLE = C5;
 
 	/** The MIDI ID for this note. */
 	public final int id;
@@ -45,28 +50,53 @@ public enum Note {
 	/** The ID of the natural of this note, if it's accented */
 	public final int naturalId;
 
-	private static class Meta {
-		private static int nextId = 0;
-		private static Note[] lookupMap = null;
+	public static boolean isPlayable(Note n) {
+		return isPlayable(n.id);
 	}
 
-	public static Note getById(int id) {
-		if (Meta.lookupMap == null) {
-			Meta.lookupMap = new Note[C5.id + 1];
+	public static boolean isPlayable(int id) {
+		return id >= MIN_PLAYABLE.id && id <= MAX_PLAYABLE.id;
+	}
+
+	public static Note fromId(int id) {
+		if (lookupId == null) {
+			lookupId = new Note[B9.id + 1];
 			for (Note n : values()) {
-				if (Meta.lookupMap[n.id] == null)
-					Meta.lookupMap[n.id] = n;
+				if (lookupId[n.id] == null)
+					lookupId[n.id] = n;
 			}
 		}
 
-		if (id < 0 || id >= Meta.lookupMap.length) {
+		if (id < 0 || id >= lookupId.length) {
 			return null;
 		}
-		return Meta.lookupMap[id];
+		return lookupId[id];
+	}
+
+	public static Note fromAbc(String abc) {
+		if (lookupAbc == null) {
+			lookupAbc = new HashMap<String, Note>(values().length * 4 / 3 + 1);
+			for (Note n : values()) {
+				lookupAbc.put(n.abc, n);
+			}
+		}
+
+		return lookupAbc.get(abc);
+	}
+
+	public static Note fromName(String name) {
+		return (Note) Enum.valueOf(Note.class, name);
+	}
+
+	private static Note[] lookupId = null;
+	private static Map<String, Note> lookupAbc = null;
+
+	private static class IdGenerator {
+		private static int next = 0;
 	}
 
 	private Note() {
-		this(Meta.nextId);
+		this(IdGenerator.next);
 	}
 
 	private Note(Note copyFrom) {
@@ -75,54 +105,49 @@ public enum Note {
 
 	private Note(int id) {
 		this.id = id;
-		Meta.nextId = id + 1;
+		IdGenerator.next = id + 1;
 
-		String abcTmp;
 		if (id == 0) {
-			abcTmp = "z";
+			this.abc = "z";
 			isAccented = false;
 			naturalId = id;
 		}
 		else {
 			String s = toString();
-			abcTmp = s.substring(0, 1);
-			switch (s.charAt(s.length() - 1)) {
-				case '2':
-					abcTmp = abcTmp.toUpperCase() + ",";
-					break;
-				case '3':
-					abcTmp = abcTmp.toUpperCase();
-					break;
-				case '4':
-					abcTmp = abcTmp.toLowerCase();
-					break;
-				case '5':
-					abcTmp = abcTmp.toLowerCase() + "'";
-					break;
-				case '1':
-					abcTmp = abcTmp.toUpperCase() + ",,";
-					break;
-				case '6':
-					abcTmp = abcTmp.toLowerCase() + "''";
-					break;
-			}
+			int octave = Integer.parseInt(s.substring(s.length() - 1));
+			StringBuilder abc = new StringBuilder(2 + Math.abs(octave - 3));
+
 			if (s.indexOf('s') == 1) {
-				abcTmp = "^" + abcTmp;
+				abc.append('^');
 				isAccented = true;
 				naturalId = id - 1;
 			}
 			else if (s.indexOf('b') == 1) {
-				abcTmp = "_" + abcTmp;
+				abc.append('_');
 				isAccented = true;
 				naturalId = id + 1;
 			}
 			else {
+				//abc.append('=');
 				isAccented = false;
 				naturalId = id;
-				// abcTmp = "=" + abcTmp;
 			}
+
+			if (octave <= 3)
+				abc.append(Character.toUpperCase(s.charAt(0)));
+			else
+				abc.append(Character.toLowerCase(s.charAt(0)));
+
+			// Add commas for octaves below 3
+			for (int c = 0; c < 3 - octave; c++)
+				abc.append(',');
+
+			// Add apostrophes for octaves above 4
+			for (int c = 0; c < octave - 4; c++)
+				abc.append('\'');
+
+			this.abc = abc.toString();
 		}
 
-		abc = abcTmp;
 	}
 }

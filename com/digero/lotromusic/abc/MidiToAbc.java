@@ -26,8 +26,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
@@ -49,40 +51,34 @@ public class MidiToAbc {
 	public static final int META_TEMPO = 0x51;
 	public static final int META_END_OF_TRACK = 0x2F;
 
-	public static void convert(Sequencer seq, String title, PrintStream out) {
-		convert(seq, title, title, 0, Note.C2, Note.C5, out);
+	public static void convert(Sequencer seq, String title, PrintStream out) throws Exception {
+		convert(seq, title, title, 0, Note.MIN_PLAYABLE, Note.MAX_PLAYABLE, out);
 	}
 
-	public static void convert(Sequencer seq, String title, String originalFileName,
-			LotroMidiReceiver rcvr, PrintStream out) {
-		convert(seq, title, originalFileName, rcvr.getTranspose(), rcvr.getLowestNote(), rcvr
-				.getHighestNote(), out);
+	public static void convert(Sequencer seq, String title, String originalFileName, LotroMidiReceiver rcvr,
+			PrintStream out) throws Exception {
+		convert(seq, title, originalFileName, rcvr.getTranspose(), rcvr.getLowestNote(), rcvr.getHighestNote(), out);
 	}
 
 	/**
 	 * Convert a MIDI song to an ABC file.
 	 * 
-	 * @param seq
-	 *            The sequencer that has the MIDI sequence, track mute info, and tempo multiplier
-	 *            info.
-	 * @param title
-	 *            The title of the ABC song.
-	 * @param originalFileName
-	 *            The original name of the MIDI file, or <code>null</code> if this isn't
-	 *            available.
-	 * @param transpose
-	 *            The number of semitones to transpose each note up or down.
-	 * @param lowestNote
-	 *            The lowest playable note.
-	 * @param highestNote
-	 *            The highest playable note.
-	 * @param out
-	 *            The ABC file will be written to this stream.
+	 * @param seq The sequencer that has the MIDI sequence, track mute info, and
+	 *            tempo multiplier info.
+	 * @param title The title of the ABC song.
+	 * @param originalFileName The original name of the MIDI file, or
+	 *            <code>null</code> if this isn't available.
+	 * @param transpose The number of semitones to transpose each note up or
+	 *            down.
+	 * @param lowestNote The lowest playable note.
+	 * @param highestNote The highest playable note.
+	 * @param out The ABC file will be written to this stream.
 	 */
-	public static boolean convert(Sequencer seq, String title, String originalFileName,
-			int transpose, Note lowestNote, Note highestNote, PrintStream out) {
+	public static boolean convert(Sequencer seq, String title, String originalFileName, int transpose, Note lowestNote,
+			Note highestNote, PrintStream out) throws Exception {
 		StringBuilder sb = new StringBuilder();
 
+		DrumMap drumMap = new DrumMap("drums.chg");
 		Sequence song = seq.getSequence();
 		Track[] tracks = song.getTracks();
 		int ppqn = song.getResolution();
@@ -162,17 +158,24 @@ public class MidiToAbc {
 					}
 
 					if (!eventMuted) {
-						int noteId = m.getData1() + transpose;
-						while (noteId > highestNote.id) {
-							noteId -= 12;
+						int noteId;
+						if (m.getChannel() == 9) {
+							// Percussion channel; use the drum map
+							noteId = drumMap.get(m.getData1()).id;
 						}
-						while (noteId < lowestNote.id) {
-							noteId += 12;
+						else {
+							noteId = m.getData1() + transpose;
+							while (noteId > highestNote.id) {
+								noteId -= 12;
+							}
+							while (noteId < lowestNote.id) {
+								noteId += 12;
+							}
 						}
 
 						int speed = m.getData2();
 						if (cmd == ShortMessage.NOTE_ON && speed > 0) {
-							Note note = Note.getById(noteId);
+							Note note = Note.fromId(noteId);
 							if (note == null) {
 								System.err.println("Invalid note ID: " + noteId);
 								continue;
@@ -322,8 +325,8 @@ public class MidiToAbc {
 
 				if (currentChord.getEndMicros() > nextChord.getStartMicros()) {
 					// If the chord is too long, add a short rest in the chord to shorten it
-					currentChord.add(new NoteEvent(currentChord.getStartMicros(), Note.Rest,
-							nextChord.getStartMicros()));
+					currentChord
+							.add(new NoteEvent(currentChord.getStartMicros(), Note.Rest, nextChord.getStartMicros()));
 				}
 				else if (currentChord.getEndMicros() < nextChord.getStartMicros()) {
 					// If the chord is too short, insert rest(s) to fill the gap
@@ -332,8 +335,7 @@ public class MidiToAbc {
 
 					// We may need to add multiple rests since the maximum length for a rest is 8s
 					while (restEnd - restStart > longestNote) {
-						chords.add(new Chord(new NoteEvent(restStart, Note.Rest, restStart
-								+ longestNote)));
+						chords.add(new Chord(new NoteEvent(restStart, Note.Rest, restStart + longestNote)));
 						restStart += longestNote;
 					}
 
@@ -351,7 +353,7 @@ public class MidiToAbc {
 
 		// Keep track of which notes have been sharped or flatted so we can naturalize them the next
 		// time they show up.
-		boolean[] accented = new boolean[Note.C5.id + 1];
+		Set<Integer> accented = new HashSet<Integer>();
 
 		// Write out ABC notation
 		for (Chord c : chords) {
@@ -373,10 +375,9 @@ public class MidiToAbc {
 				}
 
 				if (evt.note.isAccented) {
-					accented[evt.note.naturalId] = true;
+					accented.add(evt.note.naturalId);
 				}
-				else if (accented[evt.note.id]) {
-					accented[evt.note.id] = false;
+				else if (accented.remove(evt.note.id)) {
 					sb.append('=');
 				}
 

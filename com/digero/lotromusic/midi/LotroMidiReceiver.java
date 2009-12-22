@@ -49,8 +49,8 @@ public class LotroMidiReceiver implements Receiver {
 	private Receiver midiReceiver;
 	private boolean localPreviewMode;
 	private long lastTimeStamp = 0;
-	private Note lowestNote = Note.C2;
-	private Note highestNote = Note.C5;
+	private Note lowestNote = Note.MIN_PLAYABLE;
+	private Note highestNote = Note.MAX_PLAYABLE;
 	private boolean transposeNotesOutOfRange = true;
 
 	public LotroMidiReceiver() {
