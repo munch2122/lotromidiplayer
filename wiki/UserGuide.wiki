@@ -1,5 +1,13 @@
 = User Guide =
-<table><tr><td valign="middle>You can start the program either by clicking </td><td valign="middle"><a href="http://lotromidiplayer.googlecode.com/files/LotRO_MIDI_Player.jnlp"><img src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/download.png" title="Run LotRO MIDI Player" alt="Run LotRO MIDI Player"/></a></td><td valign="middle"> or double-clicking the shortcut on your desktop.</td></tr></table>
+<table>
+<tr>
+<td valign="middle>You can start the program either by clicking</td>
+<td valign="middle"><a href="http://lotromidiplayer.googlecode.com/files/LotRO_MIDI_Player.jnlp">
+<img src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/download.png" title="Run LotRO MIDI Player" alt="Run LotRO MIDI Player"/>
+</a></td>
+<td valign="middle">or double-clicking the shortcut on your desktop.</td>
+</tr>
+</table>
 
 === Configure LotRO ===
 If you want to use the live MIDI playing feature (not exporting to ABC), you must have a keyboard key mapped to each of the notes in the game. It tends to work best if none of the keys are mapped with Shift, Ctrl, or Alt modifiers. LotRO MIDI player will automatically determine your key mappings; however, if you change your keyboard mapping while the program is running, you must select "Reload Key Mappings" from the Edit menu. 
@@ -35,9 +43,8 @@ Since LotRO MIDI Player works by simulating key presses in the game, you cannot 
 To export to an ABC file, choose the option from the File menu. If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on. You may want to change the title between exports to add information about the part (e.g. " - Lute"). 
 
 === Connect MIDI Piano ===
-<img align="left" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png"/>
-<img align="left" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/spacer.png" width="10" height="236"/>
 Select "Connect MIDI Piano..." from the main window's File menu.
-<p>
+
 If your device isn't listed, make sure it's connected and turned on. If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.
-</p>
+
+<img src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png"/>
