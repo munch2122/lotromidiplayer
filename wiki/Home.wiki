@@ -1,5 +1,3 @@
-#summary Lord of the Rings Online MIDI player and MIDI to ABC converter
-
 = LotRO MIDI Player =
 
 == Features ==
