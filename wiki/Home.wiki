@@ -23,4 +23,4 @@ http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
 -----------------
 Created by Digero of Landroval
 
-[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif]
+[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/x-click-but04.gif]
