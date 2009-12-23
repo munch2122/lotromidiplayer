@@ -1,0 +1,8 @@
+#summary Instructions on how to restore the desktop shortcuts.
+
+After you run LotRO MIDI Player once from this website, you should have a shortcut on your desktop.  If you don't have a desktop shortcut, follow these instructions to restore them.
+
+  # Open the Java Control panel, and under Temporary Internet Files, click View...
+    http://i4.photobucket.com/albums/y123/digero/lotro/JavaControlPanel.jpg
+  # Select LotRO MIDI Player from the list, and click the shortcut button to install shortcuts.
+    http://i4.photobucket.com/albums/y123/digero/lotro/JavaCacheViewer.jpg
