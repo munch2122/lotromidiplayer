@@ -47,3 +47,8 @@ To export to an ABC file, choose the option from the File menu. If you want to m
 <img align="left" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/spacer.png" width="10" height="236"/>
 Select "Connect MIDI Piano..." from the main window's File menu.
 If your device isn't listed, make sure it's connected and turned on. If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.
+
+-----------------
+Created by Digero of Landroval
+
+[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif]
