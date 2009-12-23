@@ -13,4 +13,4 @@ Read the [UserGuide User Guide] for instructions.
 
 Give Feedback! Visit the [http://forums.lotro.com/showthread.php?t=121331 discussion thread] on the LotRO Forums for support or to give feedback.
 
-http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot.png
+http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
