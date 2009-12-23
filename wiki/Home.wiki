@@ -17,6 +17,7 @@ Read the [UserGuide User Guide] for instructions.
 
 Visit the [http://forums.lotro.com/showthread.php?t=121331 discussion thread] on the LotRO Forums for support or to give feedback.
 
+== Screenshot ==
 http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
 
 -----------------
