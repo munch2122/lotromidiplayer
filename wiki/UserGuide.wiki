@@ -34,7 +34,8 @@ Since LotRO MIDI Player works by simulating key presses in the game, you cannot 
 To export to an ABC file, choose the option from the File menu. If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on. You may want to change the title between exports to add information about the part (e.g. " - Lute"). 
 
 === Connect MIDI Piano ===
-<img align="right" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png"/>
+<img align="left" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png"/>
+<img align="left" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/spacer.png" width="10" height="236"/>
 Select "Connect MIDI Piano..." from the main window's File menu.
 
 If your device isn't listed, make sure it's connected and turned on. If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.
