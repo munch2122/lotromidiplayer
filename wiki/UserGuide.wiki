@@ -14,7 +14,7 @@ The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO 
     * If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.
     * Stringed instruments (Lute, Harp, Theorbo) sound the best. Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent. Drums and Cowbell are NOT supported.
 
-<table border="0" width="100%"><tr>
+<table border="0" width="65em"><tr>
 <td valign="top">
 === Track List ===
 Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece. 
@@ -39,7 +39,7 @@ http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
 === Exporting to ABC ===
 To export to an ABC file, choose the option from the File menu. If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on. You may want to change the title between exports to add information about the part (e.g. " - Lute"). 
 
-<table border="0" width="100%"><tr>
+<table border="0" width="65em"><tr>
 <td valign="top">
 === Connect MIDI Piano ===
 Select "Connect MIDI Piano..." from the main window's File menu.
