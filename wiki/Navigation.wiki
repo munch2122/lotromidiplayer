@@ -1,4 +1,4 @@
  * [Home]
  * [UserGuide User Guide]
-   * [InstallShortcuts Restore Desktop Shortcuts]
+   * [InstallShortcuts Restore Desktop Shortcut]
  * [VersionHistory Version History]
