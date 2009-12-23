@@ -14,9 +14,8 @@ The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO 
     * If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.
     * Stringed instruments (Lute, Harp, Theorbo) sound the best. Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent. Drums and Cowbell are NOT supported.
 
-<table border="0" width="65em"><tr>
-<td valign="top">
 === Track List ===
+<img align="right" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png"/>
 Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece. 
 
 === MIDI preview mode ===
@@ -26,27 +25,16 @@ When this is enabled, the song will be played using the computer's MIDI synthesi
 Set the number of half-steps to transpose the notes in the song. This will help move the song to fit within the LotRO instruments' three-octave of range. Any notes that still fall outside of the instrument's range will be automatically transposed up or down by a full octave so that they can still be played. 
 
 === Instrument ===
-Select which instrument you'll be using in-game, or for which instrument the ABC export is intended. This will make sure that the "breath" sound isn't used for the horn and clarinet. 
+Select which instrument you'll be using in-game, or for which instrument the ABC export is intended. This will make sure that the "breath" sound isn't used for the horn and clarinet.
 
 === Type text in the game ===
-Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game. To work around this, you can type using this text box. It will safely type the message into the game for you when you press Enter or click Send. 
-</td>
-<td valign="top">
-http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
-</td>
-</tr></table>
+Since LotRO MIDI Player works by simulating key presses in the game, you cannot type in the chat bar in the game. To work around this, you can type using this text box. It will safely type the message into the game for you when you press Enter or click Send.
 
 === Exporting to ABC ===
 To export to an ABC file, choose the option from the File menu. If you want to make a multi-part ABC arrangement, simply export the song multiple times with different tracks turned on. You may want to change the title between exports to add information about the part (e.g. " - Lute"). 
 
-<table border="0" width="65em"><tr>
-<td valign="top">
 === Connect MIDI Piano ===
+<img align="right" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png"/>
 Select "Connect MIDI Piano..." from the main window's File menu.
 
 If your device isn't listed, make sure it's connected and turned on. If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.
-</td>
-<td valign="top">
-http://lotromidiplayer.googlecode.com/svn/trunk/Website/mididevice-white.png
-</td>
-</tr></table>
