@@ -1,10 +1,8 @@
 ===Version 1.1.0.2===
-
     * Fixed a bug that caused chords with 6 notes in them to be the incorrect length, which could mess up the timing of the exported ABC file.
     * Fixed a bug where very short notes could mess up the timing of the exported ABC file.
 
 ===Version 1.1.0.1===
-
     * Export to ABC respects the currently selected instrument's lowest-playable note.
     * Export to ABC now shouldn't allow chords with more than 6 notes.
     * Fixed the occasional "unexpected token" error in some exported ABC files.
@@ -15,11 +13,14 @@
     * Added accelerator keys to Open a MIDI file (Ctrl+O) and Export to ABC (Ctrl+S).
 
 ===Version 1.1.0.0===
-
     * Added the ability to export to ABC files.
     * Added the ability to connect an external MIDI piano.
     * Added an instrument drop-down.
 
 ===Version 1.0.0.0===
-
     * Initial release.
+
+-----------------
+Created by Digero of Landroval
+
+[https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/x-click-but04.gif]
