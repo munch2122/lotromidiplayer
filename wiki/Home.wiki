@@ -1,6 +1,6 @@
 #summary Lord of the Rings Online MIDI player and MIDI to ABC converter
 
-http://lotromidiplayer.googlecode.com/svn/trunk/Website/logo.png
+= LotRO MIDI Player =
 
 == Features ==
     * Play MIDI songs with the Lord of the Rings online [http://lorebook.lotro.com/wiki/Mechanics:Player_Music_System Player Music System].
