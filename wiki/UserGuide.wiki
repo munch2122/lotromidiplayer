@@ -1,13 +1,5 @@
 = User Guide =
-<table>
-<tr>
-<td valign="middle>You can start the program either by clicking</td>
-<td valign="middle"><a href="http://lotromidiplayer.googlecode.com/files/LotRO_MIDI_Player.jnlp">
-<img src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/download.png" title="Run LotRO MIDI Player" alt="Run LotRO MIDI Player"/>
-</a></td>
-<td valign="middle">or double-clicking the shortcut on your desktop.</td>
-</tr>
-</table>
+After you've run LotRO MIDI Player once from this website, you can use the shortcut on your desktop to run it again without coming back here.  If you don't have a desktop shortcut [InstallShortcuts read these instructions] to restore it.
 
 === Configure LotRO ===
 If you want to use the live MIDI playing feature (not exporting to ABC), you must have a keyboard key mapped to each of the notes in the game. It tends to work best if none of the keys are mapped with Shift, Ctrl, or Alt modifiers. LotRO MIDI player will automatically determine your key mappings; however, if you change your keyboard mapping while the program is running, you must select "Reload Key Mappings" from the Edit menu. 
@@ -48,7 +40,7 @@ To export to an ABC file, choose the option from the File menu. If you want to m
 Select "Connect MIDI Piano..." from the main window's File menu.
 If your device isn't listed, make sure it's connected and turned on. If clicking refresh doesn't make the device show up, try restarting LotRO MIDI Player.
 
------------------
+---------
 Created by Digero of Landroval
 
 [https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif]
