@@ -14,8 +14,9 @@ The easiest way to open a MIDI file is to DRAG and DROP the file onto the LotRO 
     * If the game gives you a "Too many requests" error, try slowing the tempo or unchecking some of the tracks.
     * Stringed instruments (Lute, Harp, Theorbo) sound the best. Wind instruments (Flute, Clarinet, Horn, Bagpipe) sound decent. Drums and Cowbell are NOT supported.
 
-=== Track List ===
 <img align="right" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png"/>
+<img align="right" src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/spacer.png" width="10" height="441"/>
+=== Track List ===
 Uncheck tracks that you don't want to be played. The note count lists how many notes that particular instrument plays for the entire piece. 
 
 === MIDI preview mode ===
