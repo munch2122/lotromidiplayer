@@ -1,3 +1,8 @@
+===Version 1.1.0.3===
+    * If you have "Always Play Game Sound in Background" enabled, the game sound will come back much faster after you alt-tab now. Previously it could take up to 1 second for the game sound to come back.  Now, it'll happen within 1/10th of a second.
+    * The "MIDI Preview Mode" option saves its state when you restart LotRO MIDI Player.  This option also now defaults to ON the first time you run the program.
+    * Updated links in the Upgrade and About dialogs to point to the GoogleCode website.
+
 ===Version 1.1.0.2===
     * Fixed a bug that caused chords with 6 notes in them to be the incorrect length, which could mess up the timing of the exported ABC file.
     * Fixed a bug where very short notes could mess up the timing of the exported ABC file.
