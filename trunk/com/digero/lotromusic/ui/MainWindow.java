@@ -152,7 +152,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	private ExternalDeviceFrame midiPianoFrame = null;
 
-	private Version version = new Version(1, 1, 0, 2);
+	private Version version = new Version(1, 1, 0, 3);
 
 	public MainWindow() {
 		this(null);
@@ -366,8 +366,11 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 					}
 				}
 				lotroReceiver.setLocalPreviewMode(localPreviewCheckbox.isSelected());
+				prefs.putBoolean("localPreview", localPreviewCheckbox.isSelected());
 			}
 		});
+		localPreviewCheckbox.setSelected(prefs.getBoolean("localPreview", true));
+		lotroReceiver.setLocalPreviewMode(localPreviewCheckbox.isSelected());
 
 		notesMissedLabel = new JLabel();
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -36, 36, 1));
@@ -429,7 +432,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			}
 		});
 
-		soundTimer = new Timer(1000, new ActionListener() {
+		soundTimer = new Timer(100, new ActionListener() {
 			long lastResetMillis = 0;
 
 			public void actionPerformed(ActionEvent e) {
@@ -601,13 +604,13 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 					JLabel updateMessage = new JLabel(
 							"<html>LotRO MIDI Player was updated to version " + version + "!<br>"
 									+ "Visit the website to see what's new.<br>"
-									+ "<a href='http://lotro.acasylum.com/midi/changelog.html'>"
-									+ "http://lotro.acasylum.com/midi/changelog.html</a></html>");
+									+ "<a href='http://code.google.com/p/lotromidiplayer/wiki/VersionHistory'>"
+									+ "http://code.google.com/p/lotromidiplayer/wiki/VersionHistory</a></html>");
 					updateMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 					updateMessage.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent e) {
 							if (e.getButton() == MouseEvent.BUTTON1) {
-								openURL("http://lotro.acasylum.com/midi/changelog.html");
+								openURL("http://code.google.com/p/lotromidiplayer/wiki/VersionHistory");
 							}
 						}
 					});
@@ -803,14 +806,14 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				ImageIcon aboutIcon = new ImageIcon(MainWindow.class.getResource("icn_96.png"));
 				JLabel aboutMessage = new JLabel("<html>Lord of the Rings Online MIDI Player<br>"
 						+ "Version " + version + "<br>" + "Created by Digero of Landroval<br>"
-						+ "<a href='http://lotro.acasylum.com/midi'>"
-						+ "http://lotro.acasylum.com/midi</a><br>"
-						+ "&copy; 2008 acasylum.com</html>");
+						+ "<a href='http://lotromidiplayer.googlecode.com'>"
+						+ "http://lotromidiplayer.googlecode.com</a><br>"
+						+ "&copy; 2009 Ben Howell</html>");
 				aboutMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				aboutMessage.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
 						if (e.getButton() == MouseEvent.BUTTON1) {
-							openURL("http://lotro.acasylum.com/midi");
+							openURL("http://lotromidiplayer.googlecode.com");
 						}
 					}
 				});

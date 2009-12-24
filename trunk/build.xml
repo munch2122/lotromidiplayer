@@ -23,10 +23,10 @@
 				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicMain" />
 			</manifest>
 		</jar>
-		<signjar jar="${LotroMusic.location}/Website/lotromusic.jar" alias="digero" keystore="digero.keystore" storepass="dzT2kX86qt452OnY" />
+		<signjar jar="${LotroMusic.location}/Website/lotromusic.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 
 		<jar jarfile="${LotroMusic.location}/Website/lotromusic_dll.jar" basedir="${LotroMusic.location}" includes="JavaWinApi.dll" />
-		<signjar jar="${LotroMusic.location}/Website/lotromusic_dll.jar" alias="digero" keystore="digero.keystore" storepass="dzT2kX86qt452OnY" />
+		<signjar jar="${LotroMusic.location}/Website/lotromusic_dll.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 	</target>
 	<target name="LotroMusicMain">
 		<java classname="com.digero.lotromusic.LotroMusicMain" failonerror="true" fork="yes">
