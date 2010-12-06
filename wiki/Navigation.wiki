@@ -1,4 +1,5 @@
  * [Home]
  * [UserGuide User Guide]
    * [InstallShortcuts Restore Desktop Shortcut]
+   * [DeleteJavaTempFiles Delete Java Temporary Internet Files]
  * [VersionHistory Version History]
