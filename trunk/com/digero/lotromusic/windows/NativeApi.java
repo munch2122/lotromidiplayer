@@ -7,7 +7,7 @@ public class NativeApi {
 			+ "version of LOTRO MIDI Player";
 	public static final String ERROR_TITLE = "Feature not supported";
 
-	private static final boolean DEBUG_DISABLE_WINAPI = true;
+	private static final boolean DEBUG_DISABLE_WINAPI = false;
 
 	public static NativeMethods getInstance() {
 		if (instance == null) {

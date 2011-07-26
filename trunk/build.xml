@@ -31,14 +31,14 @@
 	<target name="dist-standalone" depends="build">
 		<echo message="[STANDALONE] ${LotroMusic.location}" />
 
-		<jar jarfile="${LotroMusic.location}/Website/lotro-midi-standalone.jar" basedir="${LotroMusic.location}" 
+		<jar jarfile="${LotroMusic.location}/Website/lotromusic-standalone.jar" basedir="${LotroMusic.location}" 
 			includes="**/*.class,**/*.png" 
 			excludes="*.*,.*/**,Website/**,**/*-fw.png">
 			<manifest>
 				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicStandalone" />
 			</manifest>
 		</jar>
-		<signjar jar="${LotroMusic.location}/Website/lotro-midi-standalone.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
+		<signjar jar="${LotroMusic.location}/Website/lotromusic-standalone.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 	</target>
 	<target name="LotroMusicMain">
 		<java classname="com.digero.lotromusic.LotroMusicMain" failonerror="true" fork="yes">
