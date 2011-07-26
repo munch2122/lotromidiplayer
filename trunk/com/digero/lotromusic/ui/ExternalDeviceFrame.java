@@ -56,6 +56,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.digero.lotromusic.midi.LotroMidiReceiver;
+import com.digero.lotromusic.windows.NativeApi;
+import com.digero.lotromusic.windows.NativeApiUnavailableException;
 
 @SuppressWarnings("serial")
 public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants {
@@ -82,8 +84,7 @@ public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}
-		catch (Exception e) {
-		}
+		catch (Exception e) {}
 		ExternalDeviceFrame edf = new ExternalDeviceFrame();
 		edf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		edf.setVisible(true);
@@ -178,9 +179,12 @@ public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants 
 			}
 		});
 
-		double[] cols = new double[] { 4, PREFERRED, 150, PREFERRED, FILL, 4 };
-		double[] rows = new double[] { 4, PREFERRED, PREFERRED, PREFERRED, 4, PREFERRED, PREFERRED,
-				4 };
+		double[] cols = new double[] {
+				4, PREFERRED, 150, PREFERRED, FILL, 4
+		};
+		double[] rows = new double[] {
+				4, PREFERRED, PREFERRED, PREFERRED, 4, PREFERRED, PREFERRED, 4
+		};
 		TableLayout layout = new TableLayout(cols, rows);
 		layout.setHGap(4);
 		layout.setVGap(4);
@@ -199,8 +203,12 @@ public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants 
 		cp.add(new JLabel("Transpose:"), "1, 3");
 		cp.add(tpPanel, "2, 3");
 
-		cols = new double[] { 25, FILL };
-		rows = new double[] { PREFERRED, PREFERRED, PREFERRED };
+		cols = new double[] {
+				25, FILL
+		};
+		rows = new double[] {
+				PREFERRED, PREFERRED, PREFERRED
+		};
 		JPanel rangePanel = new JPanel(new TableLayout(cols, rows));
 		rangePanel.add(new JLabel("If a note is out of range:"), "0, 0, 1, 0");
 		rangePanel.add(transposeOctave, "1, 1");
@@ -239,11 +247,15 @@ public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants 
 			return;
 		}
 
-		if (!lotroReceiver.resetHWnd()) {
-			error("Unable to find Lord of the Rings Online window.\n"
-					+ "Make sure that the game is running.",
-					"Unable to find Lord of the Rings Online Window");
-			return;
+		try {
+			if (!lotroReceiver.resetHWnd()) {
+				error("Unable to find Lord of the Rings Online window.\n" + "Make sure that the game is running.",
+						"Unable to find Lord of the Rings Online Window");
+				return;
+			}
+		}
+		catch (NativeApiUnavailableException e1) {
+			error(NativeApi.ERROR_MESSAGE, NativeApi.ERROR_TITLE);
 		}
 
 		try {
@@ -253,8 +265,8 @@ public class ExternalDeviceFrame extends JFrame implements TableLayoutConstants 
 			isRunning = true;
 		}
 		catch (MidiUnavailableException e) {
-			error("Failed to open device: " + deviceInUse.getDeviceInfo().getName() + "\n"
-					+ e.getMessage(), "Failed to open device");
+			error("Failed to open device: " + deviceInUse.getDeviceInfo().getName() + "\n" + e.getMessage(),
+					"Failed to open device");
 		}
 	}
 

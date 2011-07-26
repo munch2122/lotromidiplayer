@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.digero.lotromusic.windows.WinApi;
+import com.digero.lotromusic.windows.NativeApi;
 
 public class MusicKeymap {
 	private Map<Note, KeyInfo> map;
@@ -55,7 +55,7 @@ public class MusicKeymap {
 			intMap.clear();
 		}
 
-		File file = new File(WinApi.GetMyDocumentsPath()
+		File file = new File(NativeApi.getInstance().GetMyDocumentsPath()
 				+ "\\The Lord of the Rings Online\\lotro.keymap");
 		System.out.println(file.getPath());
 

@@ -1,3 +1,4 @@
 Redirect /lotro http://lotro.acasylum.com
+Redirect 301 /midi http://lotromidiplayer.googlecode.com
 AddType x-mapp-php5 .php
 AddType application/x-java-jnlp-file .jnlp

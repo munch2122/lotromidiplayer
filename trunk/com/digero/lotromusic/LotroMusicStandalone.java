@@ -1,4 +1,4 @@
-/* Copyright (c) 2008 Ben Howell
+/* Copyright (c) 2011 Ben Howell
  * This software is licensed under the MIT License
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a 
@@ -20,31 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package com.digero.lotromusic.abc;
+package com.digero.lotromusic;
 
-import com.digero.lotromusic.keyboard.Note;
+import java.io.File;
 
-public class NoteEvent {
-	public long startMicros;
-	public long endMicros;
-	public Note note;
+import javax.swing.JFrame;
+import javax.swing.UIManager;
 
-	public NoteEvent(long startMicros, Note note) {
-		this.startMicros = startMicros;
-		this.note = note;
-	}
+import com.digero.lotromusic.ui.MainWindow;
 
-	public NoteEvent(long startMicros, Note note, long endMicros) {
-		this.startMicros = startMicros;
-		this.note = note;
-		this.endMicros = endMicros;
-	}
+public class LotroMusicStandalone {
+	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}
+		catch (Exception e) {}
 
-	public long getLength() {
-		return endMicros - startMicros;
-	}
+		File fileToOpen = null;
+		if (args.length > 0) {
+			fileToOpen = new File(args[0]);
+		}
 
-	public void setLength(long length) {
-		endMicros = startMicros + length;
+		MainWindow mainWindow = new MainWindow(fileToOpen);
+		mainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		mainWindow.setVisible(true);
 	}
 }
