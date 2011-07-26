@@ -23,12 +23,14 @@
 package com.digero.lotromusic.abc;
 
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
@@ -37,6 +39,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import com.digero.lotromusic.keyboard.Instrument;
 import com.digero.lotromusic.keyboard.Note;
 import com.digero.lotromusic.midi.LotroMidiReceiver;
 
@@ -45,44 +48,80 @@ public class MidiToAbc {
 	public static final int SHORTEST_NOTE_MICROS = 62500; // 1/16 second
 	public static final int LONGEST_NOTE_MICROS = 8000000; // 8 seconds
 
+	public static final int META_TRACK_NAME = 0x03;
 	public static final int META_KEY_SIGNATURE = 0x59;
 	public static final int META_TEMPO = 0x51;
 	public static final int META_END_OF_TRACK = 0x2F;
+
+	private static String title;
+	private static String originalFileName;
+	private static int transpose;
+	private static Sequencer seq;
+	private static Note lowestNote;
+	private static Note highestNote;
+
+	private static int quarterNote;
+	private static int shortestNote;
+	private static final int shortestNoteDivisor = 8;
+	private static long songLengthMicros;
+	private static int bpm;
 
 	public static void convert(Sequencer seq, String title, PrintStream out) {
 		convert(seq, title, title, 0, Note.C2, Note.C5, out);
 	}
 
-	public static void convert(Sequencer seq, String title, String originalFileName,
-			LotroMidiReceiver rcvr, PrintStream out) {
-		convert(seq, title, originalFileName, rcvr.getTranspose(), rcvr.getLowestNote(), rcvr
-				.getHighestNote(), out);
+	public static void convert(Sequencer seq, String title, String originalFileName, LotroMidiReceiver rcvr,
+			PrintStream out) {
+		convert(seq, title, originalFileName, rcvr.getTranspose(), rcvr.getLowestNote(), rcvr.getHighestNote(), out);
 	}
 
 	/**
 	 * Convert a MIDI song to an ABC file.
 	 * 
-	 * @param seq
-	 *            The sequencer that has the MIDI sequence, track mute info, and tempo multiplier
-	 *            info.
-	 * @param title
-	 *            The title of the ABC song.
-	 * @param originalFileName
-	 *            The original name of the MIDI file, or <code>null</code> if this isn't
-	 *            available.
-	 * @param transpose
-	 *            The number of semitones to transpose each note up or down.
-	 * @param lowestNote
-	 *            The lowest playable note.
-	 * @param highestNote
-	 *            The highest playable note.
-	 * @param out
-	 *            The ABC file will be written to this stream.
+	 * @param seq The sequencer that has the MIDI sequence, track mute info, and
+	 *            tempo multiplier info.
+	 * @param title The title of the ABC song.
+	 * @param originalFileName The original name of the MIDI file, or
+	 *            <code>null</code> if this isn't available.
+	 * @param transpose The number of semitones to transpose each note up or
+	 *            down.
+	 * @param lowestNote The lowest playable note.
+	 * @param highestNote The highest playable note.
+	 * @param out The ABC file will be written to this stream.
 	 */
-	public static boolean convert(Sequencer seq, String title, String originalFileName,
-			int transpose, Note lowestNote, Note highestNote, PrintStream out) {
-		StringBuilder sb = new StringBuilder();
+	public static boolean convert(Sequencer seq, String title, String originalFileName, int transpose, Note lowestNote,
+			Note highestNote, PrintStream out) {
+		MidiToAbc.seq = seq;
+		MidiToAbc.title = title;
+		MidiToAbc.originalFileName = originalFileName;
+		MidiToAbc.transpose = transpose;
+		MidiToAbc.lowestNote = lowestNote;
+		MidiToAbc.highestNote = highestNote;
 
+		List<Chord> chords = getChords();
+		if (chords == null)
+			return false;
+		outputAbc(chords, out);
+
+		return true;
+	}
+
+	public static Sequence convertToMidi(Sequencer seq, String title, String originalFileName, int transpose,
+			Note lowestNote, Note highestNote, Instrument instrument) {
+		MidiToAbc.seq = seq;
+		MidiToAbc.title = title;
+		MidiToAbc.originalFileName = originalFileName;
+		MidiToAbc.transpose = transpose;
+		MidiToAbc.lowestNote = lowestNote;
+		MidiToAbc.highestNote = highestNote;
+
+		List<Chord> chords = getChords();
+		if (chords == null)
+			return null;
+		return outputMidi(chords, instrument);
+	}
+
+	public static List<Chord> getChords() {
 		Sequence song = seq.getSequence();
 		Track[] tracks = song.getTracks();
 		int ppqn = song.getResolution();
@@ -103,7 +142,7 @@ public class MidiToAbc {
 		int tempo = ONE_MINUTE_MICROS / 120;
 		// The current microsecond position in the song
 		long micros = 0;
-		long songLengthMicros = 0;
+		songLengthMicros = 0;
 		while (true) {
 			// Find the track with the next MIDI message
 			int trackToAdvance = -1;
@@ -143,7 +182,7 @@ public class MidiToAbc {
 			else if (msg instanceof ShortMessage) {
 				ShortMessage m = (ShortMessage) msg;
 				int cmd = m.getCommand();
-				if (cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) {
+				if ((cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) && m.getChannel() != 9) {
 					// Try 30 different possible tempos: [62 BPM .. 120 BPM] by 2's
 					// We're checking all tracks here, even the muted ones, so that we have
 					// identical quantization if the song is split into multiple abc files
@@ -172,7 +211,7 @@ public class MidiToAbc {
 
 						int speed = m.getData2();
 						if (cmd == ShortMessage.NOTE_ON && speed > 0) {
-							Note note = Note.getById(noteId);
+							Note note = Note.fromId(noteId);
 							if (note == null) {
 								System.err.println("Invalid note ID: " + noteId);
 								continue;
@@ -200,7 +239,7 @@ public class MidiToAbc {
 
 		if (events.size() == 0) {
 			System.err.println("No events!");
-			return false;
+			return null;
 		}
 
 		if (notesOn.size() > 0) {
@@ -218,11 +257,10 @@ public class MidiToAbc {
 				iBest = i;
 			}
 		}
-		int bpm = 120 - (2 * iBest);
-		int quarterNote = ONE_MINUTE_MICROS / bpm;
-		final int shortestNoteDivisor = 8;
+		bpm = 120 - (2 * iBest);
+		quarterNote = ONE_MINUTE_MICROS / bpm;
 		// Shortest note is a 1/32nd note
-		int shortestNote = quarterNote / shortestNoteDivisor;
+		shortestNote = quarterNote / shortestNoteDivisor;
 		// Longest note is as close to 8 seconds as we can get
 		int longestNote = shortestNote * (LONGEST_NOTE_MICROS / shortestNote);
 
@@ -322,8 +360,8 @@ public class MidiToAbc {
 
 				if (currentChord.getEndMicros() > nextChord.getStartMicros()) {
 					// If the chord is too long, add a short rest in the chord to shorten it
-					currentChord.add(new NoteEvent(currentChord.getStartMicros(), Note.Rest,
-							nextChord.getStartMicros()));
+					currentChord
+							.add(new NoteEvent(currentChord.getStartMicros(), Note.Rest, nextChord.getStartMicros()));
 				}
 				else if (currentChord.getEndMicros() < nextChord.getStartMicros()) {
 					// If the chord is too short, insert rest(s) to fill the gap
@@ -332,8 +370,7 @@ public class MidiToAbc {
 
 					// We may need to add multiple rests since the maximum length for a rest is 8s
 					while (restEnd - restStart > longestNote) {
-						chords.add(new Chord(new NoteEvent(restStart, Note.Rest, restStart
-								+ longestNote)));
+						chords.add(new Chord(new NoteEvent(restStart, Note.Rest, restStart + longestNote)));
 						restStart += longestNote;
 					}
 
@@ -348,6 +385,12 @@ public class MidiToAbc {
 				currentChord = nextChord;
 			}
 		}
+
+		return chords;
+	}
+
+	private static void outputAbc(List<Chord> chords, PrintStream out) {
+		StringBuilder sb = new StringBuilder();
 
 		// Keep track of which notes have been sharped or flatted so we can naturalize them the next
 		// time they show up.
@@ -423,7 +466,7 @@ public class MidiToAbc {
 
 		out.println("X: 1");
 		out.println("T: " + title + " (" + timeToString(songLengthMicros) + ")");
-		out.println("Z: Transcribed by LotRO MIDI Player: http://lotro.acasylum.com/midi");
+		out.println("Z: Transcribed using LotRO MIDI Player: http://lotro.acasylum.com/midi");
 		if (originalFileName != null) {
 			out.println("%  Original file: " + originalFileName);
 		}
@@ -436,8 +479,36 @@ public class MidiToAbc {
 		out.println("K: C");
 		out.println();
 		out.print(sb.toString());
+	}
 
-		return true;
+	private static Sequence outputMidi(List<Chord> chords, Instrument instrument) {
+		Sequence out;
+		try {
+			out = new Sequence(Sequence.PPQ, shortestNoteDivisor);
+		}
+		catch (InvalidMidiDataException e) {
+			return null;
+		}
+
+		// Track 0: Title and meta info
+		Track track = out.createTrack();
+		track.add(createTrackNameEvent(title));
+		track.add(createTempoEvent(ONE_MINUTE_MICROS / bpm, 0));
+
+		// Track 1
+		int trackNumber = 1;
+		track = out.createTrack();
+
+		track.add(createProgramChangeEvent(32, trackNumber, 0));
+		for (Chord chord : chords) {
+			for (int j = 0; j < chord.size(); j++) {
+				NoteEvent evt = chord.get(j);
+				track.add(createNoteOnEvent(evt, trackNumber));
+				track.add(createNoteOffEvent(evt, trackNumber));
+			}
+		}
+
+		return out;
 	}
 
 	private static int gcd(int a, int b) {
@@ -484,6 +555,73 @@ public class MidiToAbc {
 
 		public int compare(NoteEvent n1, NoteEvent n2) {
 			return (int) Math.signum(n1.startMicros - n2.startMicros);
+		}
+	}
+
+	/**
+	 * @param mpqn Microseconds per quarter note
+	 */
+	private static MidiEvent createTempoEvent(int mpqn, int ticks) {
+		try {
+			byte[] data = new byte[3];
+			data[0] = (byte) ((mpqn >>> 16) & 0xFF);
+			data[1] = (byte) ((mpqn >>> 8) & 0xFF);
+			data[2] = (byte) (mpqn & 0xFF);
+
+			MetaMessage msg = new MetaMessage();
+			msg.setMessage(META_TEMPO, data, data.length);
+			return new MidiEvent(msg, ticks);
+		}
+		catch (InvalidMidiDataException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static MidiEvent createTrackNameEvent(String name) {
+		try {
+			byte[] data = name.getBytes("ASCII");
+			MetaMessage msg = new MetaMessage();
+			msg.setMessage(META_TRACK_NAME, data, data.length);
+			return new MidiEvent(msg, 0);
+		}
+		catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		catch (InvalidMidiDataException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static MidiEvent createProgramChangeEvent(int patch, int channel, int ticks) {
+		try {
+			ShortMessage msg = new ShortMessage();
+			msg.setMessage(ShortMessage.PROGRAM_CHANGE, channel, patch, 0);
+			return new MidiEvent(msg, ticks);
+		}
+		catch (InvalidMidiDataException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static MidiEvent createNoteOnEvent(NoteEvent evt, int channel) {
+		try {
+			ShortMessage msg = new ShortMessage();
+			msg.setMessage(ShortMessage.NOTE_ON, channel, evt.note.id, 96);
+			return new MidiEvent(msg, evt.startMicros / shortestNote);
+		}
+		catch (InvalidMidiDataException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static MidiEvent createNoteOffEvent(NoteEvent evt, int channel) {
+		try {
+			ShortMessage msg = new ShortMessage();
+			msg.setMessage(ShortMessage.NOTE_OFF, channel, evt.note.id, 96);
+			return new MidiEvent(msg, evt.endMicros / shortestNote);
+		}
+		catch (InvalidMidiDataException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

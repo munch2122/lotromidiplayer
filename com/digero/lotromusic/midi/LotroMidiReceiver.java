@@ -35,7 +35,8 @@ import javax.sound.midi.ShortMessage;
 import com.digero.lotromusic.keyboard.KeyInfo;
 import com.digero.lotromusic.keyboard.MusicKeymap;
 import com.digero.lotromusic.keyboard.Note;
-import com.digero.lotromusic.windows.WinApi;
+import com.digero.lotromusic.windows.NativeApi;
+import com.digero.lotromusic.windows.NativeApiUnavailableException;
 
 public class LotroMidiReceiver implements Receiver {
 	public static final int MAX_POLYPHONY = 3;
@@ -96,8 +97,8 @@ public class LotroMidiReceiver implements Receiver {
 		return hWnd;
 	}
 
-	public boolean resetHWnd() {
-		hWnd = WinApi.FindWindow("Turbine Device Class", null);
+	public boolean resetHWnd() throws NativeApiUnavailableException {
+		hWnd = NativeApi.getInstance().FindWindow("Turbine Device Class", null);
 		return hWnd != 0;
 	}
 
@@ -146,25 +147,29 @@ public class LotroMidiReceiver implements Receiver {
 	}
 
 	public void releaseAllKeys() {
-		if (keysDown.size() > 0) {
-			WinApi.SendFocusMessage(hWnd, true);
-			while (keysDown.size() > 0) {
-				WinApi.KeyUp(hWnd, keysDown.poll(), true);
+		try {
+			if (keysDown.size() > 0) {
+				NativeApi.getInstance().SendFocusMessage(hWnd, true);
+				while (keysDown.size() > 0) {
+					NativeApi.getInstance().KeyUp(hWnd, keysDown.poll(), true);
+				}
+				NativeApi.getInstance().SendFocusMessage(hWnd, false);
 			}
-			WinApi.SendFocusMessage(hWnd, false);
-		}
 
-		if (midiReceiver != null) {
-			try {
-				ShortMessage allNotesOff = new ShortMessage();
-				for (int i = 0; i < 16; i++) {
-					allNotesOff.setMessage(ShortMessage.CONTROL_CHANGE, i, ALL_NOTES_OFF, 0);
-					midiReceiver.send(allNotesOff, lastTimeStamp);
+			if (midiReceiver != null) {
+				try {
+					ShortMessage allNotesOff = new ShortMessage();
+					for (int i = 0; i < 16; i++) {
+						allNotesOff.setMessage(ShortMessage.CONTROL_CHANGE, i, ALL_NOTES_OFF, 0);
+						midiReceiver.send(allNotesOff, lastTimeStamp);
+					}
+				}
+				catch (InvalidMidiDataException e) {
+					e.printStackTrace();
 				}
 			}
-			catch (InvalidMidiDataException e) {
-				e.printStackTrace();
-			}
+		}
+		catch (NativeApiUnavailableException e) {
 		}
 	}
 
@@ -196,65 +201,68 @@ public class LotroMidiReceiver implements Receiver {
 			midiReceiver.send(message, timeStamp);
 		}
 		else if (message instanceof ShortMessage) {
-			ShortMessage m = (ShortMessage) message;
+			try {
+				ShortMessage m = (ShortMessage) message;
 
-			int cmd = m.getCommand();
-			if (cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) {
-				int speed = m.getData2();
-				int note = m.getData1() + transpose;
-				if (transposeNotesOutOfRange) {
-					while (note > highestNote.id) {
-						note -= 12;
-					}
-					while (note < lowestNote.id) {
-						note += 12;
-					}
-				}
-
-				KeyInfo kbdKey = getKeyMap().getKey(note);
-
-				if (kbdKey != null) {
-					if (cmd == ShortMessage.NOTE_ON && speed > 0) {
-						Thread t = Thread.currentThread();
-						if (t.getPriority() != 3) {
-							t.setPriority(3);
+				int cmd = m.getCommand();
+				if (cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) {
+					int speed = m.getData2();
+					int note = m.getData1() + transpose;
+					if (transposeNotesOutOfRange) {
+						while (note > highestNote.id) {
+							note -= 12;
 						}
-
-						WinApi.SendFocusMessage(hWnd, true);
-
-						if (keysDown.size() >= MAX_POLYPHONY) {
-							WinApi.KeyUp(hWnd, keysDown.poll(), false);
+						while (note < lowestNote.id) {
+							note += 12;
 						}
-
-						WinApi.KeyDown(hWnd, kbdKey, false);
-						if (unfocusAfterNote) {
-							WinApi.SendFocusMessage(hWnd, false);
-						}
-						keysDown.add(kbdKey);
 					}
-					else {
-						if (keysDown.contains(kbdKey)) {
-							WinApi.SendFocusMessage(hWnd, true);
-							WinApi.KeyUp(hWnd, kbdKey, false);
-							if (unfocusAfterNote) {
-								WinApi.SendFocusMessage(hWnd, false);
+
+					KeyInfo kbdKey = getKeyMap().getKey(note);
+
+					if (kbdKey != null) {
+						if (cmd == ShortMessage.NOTE_ON && speed > 0) {
+							Thread t = Thread.currentThread();
+							if (t.getPriority() != 3) {
+								t.setPriority(3);
 							}
-							keysDown.remove(kbdKey);
+
+							NativeApi.getInstance().SendFocusMessage(hWnd, true);
+							if (keysDown.size() >= MAX_POLYPHONY) {
+								NativeApi.getInstance().KeyUp(hWnd, keysDown.poll(), false);
+							}
+
+							NativeApi.getInstance().KeyDown(hWnd, kbdKey, false);
+							if (unfocusAfterNote) {
+								NativeApi.getInstance().SendFocusMessage(hWnd, false);
+							}
+							keysDown.add(kbdKey);
+						}
+						else {
+							if (keysDown.contains(kbdKey)) {
+								NativeApi.getInstance().SendFocusMessage(hWnd, true);
+								NativeApi.getInstance().KeyUp(hWnd, kbdKey, false);
+								if (unfocusAfterNote) {
+									NativeApi.getInstance().SendFocusMessage(hWnd, false);
+								}
+								keysDown.remove(kbdKey);
+							}
 						}
 					}
 				}
-			}
-			else if (cmd == ShortMessage.CONTROL_CHANGE) {
-				// Handle "all notes off"
-				if (m.getData1() == ALL_NOTES_OFF) {
-					releaseAllKeys();
+				else if (cmd == ShortMessage.CONTROL_CHANGE) {
+					// Handle "all notes off"
+					if (m.getData1() == ALL_NOTES_OFF) {
+						releaseAllKeys();
+					}
+					if (midiReceiver != null) {
+						midiReceiver.send(message, timeStamp);
+					}
 				}
-				if (midiReceiver != null) {
+				else if (cmd == ShortMessage.PROGRAM_CHANGE && midiReceiver != null) {
 					midiReceiver.send(message, timeStamp);
 				}
 			}
-			else if (cmd == ShortMessage.PROGRAM_CHANGE && midiReceiver != null) {
-				midiReceiver.send(message, timeStamp);
+			catch (NativeApiUnavailableException e) {
 			}
 		}
 	}

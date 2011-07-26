@@ -14,7 +14,7 @@
 		</javac>
 	</target>
 	<target name="dist" depends="build">
-		<echo message="${LotroMusic.location}" />
+		<echo message="[JNLP] ${LotroMusic.location}" />
 
 		<jar jarfile="${LotroMusic.location}/Website/lotromusic.jar" basedir="${LotroMusic.location}" 
 			includes="**/*.class,**/*.png" 
@@ -28,8 +28,25 @@
 		<jar jarfile="${LotroMusic.location}/Website/lotromusic_dll.jar" basedir="${LotroMusic.location}" includes="JavaWinApi.dll" />
 		<signjar jar="${LotroMusic.location}/Website/lotromusic_dll.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 	</target>
+	<target name="dist-standalone" depends="build">
+		<echo message="[STANDALONE] ${LotroMusic.location}" />
+
+		<jar jarfile="${LotroMusic.location}/Website/lotro-midi-standalone.jar" basedir="${LotroMusic.location}" 
+			includes="**/*.class,**/*.png" 
+			excludes="*.*,.*/**,Website/**,**/*-fw.png">
+			<manifest>
+				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicStandalone" />
+			</manifest>
+		</jar>
+		<signjar jar="${LotroMusic.location}/Website/lotro-midi-standalone.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
+	</target>
 	<target name="LotroMusicMain">
 		<java classname="com.digero.lotromusic.LotroMusicMain" failonerror="true" fork="yes">
+			<classpath refid="project.classpath" />
+		</java>
+	</target>
+	<target name="LotroMusicStandalone">
+		<java classname="com.digero.lotromusic.LotroMusicStandalone" failonerror="true" fork="yes">
 			<classpath refid="project.classpath" />
 		</java>
 	</target>

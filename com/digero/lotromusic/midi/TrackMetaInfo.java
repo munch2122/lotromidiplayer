@@ -66,7 +66,7 @@ public class TrackMetaInfo {
 						}
 						trackInfo[i].noteCount++;
 					}
-					else if (cmd == ShortMessage.PROGRAM_CHANGE) {
+					else if (cmd == ShortMessage.PROGRAM_CHANGE && m.getChannel() != 9) {
 						int instrument = m.getData1();
 						trackInfo[i].addInstrument(instrument);
 					}
@@ -77,27 +77,27 @@ public class TrackMetaInfo {
 					byte[] data = m.getData();
 					try {
 						switch (m.getType()) {
-							case META_TEXT: {
-								String value = new String(data, 0, data.length, "US-ASCII");
-								if (trackInfo[i].text == null)
-									trackInfo[i].text = value.trim();
-								break;
-							}
-							case META_TRACKNAME: {
-								String value = new String(data, 0, data.length, "US-ASCII");
-								trackInfo[i].name = value.trim();
-								break;
-							}
-							case META_INSTRUMENT: {
-								String value = new String(data, 0, data.length, "US-ASCII");
-								trackInfo[i].instrumentName = value.trim();
-								break;
-							}
-							case META_PROGRAMNAME: {
-								String value = new String(data, 0, data.length, "US-ASCII");
-								trackInfo[i].programName = value.trim();
-								break;
-							}
+						case META_TEXT: {
+							String value = new String(data, 0, data.length, "US-ASCII");
+							if (trackInfo[i].text == null)
+								trackInfo[i].text = value.trim();
+							break;
+						}
+						case META_TRACKNAME: {
+							String value = new String(data, 0, data.length, "US-ASCII");
+							trackInfo[i].name = value.trim();
+							break;
+						}
+						case META_INSTRUMENT: {
+							String value = new String(data, 0, data.length, "US-ASCII");
+							trackInfo[i].instrumentName = value.trim();
+							break;
+						}
+						case META_PROGRAMNAME: {
+							String value = new String(data, 0, data.length, "US-ASCII");
+							trackInfo[i].programName = value.trim();
+							break;
+						}
 						}
 					}
 					catch (UnsupportedEncodingException ex) {
@@ -193,28 +193,134 @@ public class TrackMetaInfo {
 		return getDescription();
 	}
 
-	private static final String[] midiInstrumentNames = { "Piano", "Bright Piano", "Elec Piano",
-			"Honky-tonk Piano", "Rhodes Piano", "Chorus Piano", "Harpschord", "Clavinet",
-			"Celesta", "Glockenspiel", "Music Box", "Vibraphone", "Marimba", "Xylophone",
-			"Tubular Bells", "Dulcimer", "Hammond Organ", "Perc Organ", "Rock Organ",
-			"Church Organ", "Reed Organ", "Accordion", "Harmonica", "Tango Acordn", "Nylon Guitar",
-			"Steel String Guitar", "Jazz Guitar", "Clean Electric Guitar", "Mute Electric Guitar",
-			"Ovrdrive Guitar", "Distorted Guitar", "Harmonics", "Acoustic Bass",
-			"Fingered Electric Bass", "Picked Electric Bass", "Fretles Bass", "Slap Bass 1",
-			"Slap Bass 2", "Synth Bass 1", "Synth Bass 2", "Violin", "Viola", "Cello",
-			"Contrabass", "Tremolo Strings", "Pizzicato Strings", "Orchestra Harp", "Timpani",
-			"String Ensemble 1", "String Ensemble 2", "Synth String 1", "Synth String 2",
-			"Choir Aahs", "Voice Oohs", "Synth Voice", "Orchestra Hit", "Trumpet", "Trombone",
-			"Tuba", "Mute Trumpet", "French Horn", "Brass Section", "Synth Brass 1",
-			"Synth Brass 2", "Soprano Sax", "Alto Sax", "Tenor Sax", "Bari Sax", "Oboe",
-			"Englsh Horn", "Bassoon", "Clarinet", "Piccolo", "Flute", "Recorder", "Pan Flute",
-			"Bottle Blow", "Shakuhachi", "Whistle", "Ocarina", "Square Wave", "Saw Tooth",
-			"Caliope", "Chiff Lead", "Charang", "Solo Synth Vox", "Brite Saw", "Brass & Lead",
-			"Fantasa Pad", "Warm Pad", "Poly Synth Pad", "Space Vox Pad", "Bow Glass Pad",
-			"Metal Pad", "Halo Pad", "Sweep Pad", "Ice Rain", "Sound Track", "Crystal",
-			"Atmosphere", "Brightness", "Goblin", "Echo Drops", "Star Theme", "Sitar", "Banjo",
-			"Shamisen", "Koto", "Kalimba", "Bag Pipe", "Fiddle", "Shanai", "Tinkle Bell", "Agogo",
-			"Steel Drums", "Woodblock", "Taiko Drum", "Melodic Tom", "Synth Drum", "Revrse Cymbal",
-			"Guitar Fret Noise", "Breath Noise", "Sea Shore", "Bird Tweet", "Telephone Ring",
-			"Helicopter", "Applause", "Gun Shot" };
+	private static final String[] midiInstrumentNames = {
+			"Piano", // 
+			"Bright Piano", // 
+			"Elec Piano", // 
+			"Honky-tonk Piano", // 
+			"Rhodes Piano", // 
+			"Chorus Piano", // 
+			"Harpschord", // 
+			"Clavinet", // 
+			"Celesta", // 
+			"Glockenspiel", // 
+			"Music Box", // 
+			"Vibraphone", // 
+			"Marimba", // 
+			"Xylophone", // 
+			"Tubular Bells", // 
+			"Dulcimer", // 
+			"Hammond Organ", // 
+			"Perc Organ", // 
+			"Rock Organ", // 
+			"Church Organ", // 
+			"Reed Organ", // 
+			"Accordion", // 
+			"Harmonica", // 
+			"Tango Acordn", // 
+			"Nylon Guitar", // 
+			"Steel String Guitar", // 
+			"Jazz Guitar", // 
+			"Clean Elec. Guitar", // 
+			"Mute Elec. Guitar", // 
+			"Ovrdrive Guitar", // 
+			"Distorted Guitar", // 
+			"Harmonics", // 
+			"Acoustic Bass", // 
+			"Fingered Elec. Bass", // 
+			"Picked Elec. Bass", // 
+			"Fretless Bass", // 
+			"Slap Bass 1", // 
+			"Slap Bass 2", // 
+			"Synth Bass 1", // 
+			"Synth Bass 2", // 
+			"Violin", // 
+			"Viola", // 
+			"Cello", // 
+			"Contrabass", // 
+			"Tremolo Strings", // 
+			"Pizzicato Strings", // 
+			"Orchestra Harp", // 
+			"Timpani", // 
+			"String Ensemble 1", // 
+			"String Ensemble 2", // 
+			"Synth String 1", // 
+			"Synth String 2", // 
+			"Choir Aahs", // 
+			"Voice Oohs", // 
+			"Synth Voice", // 
+			"Orchestra Hit", // 
+			"Trumpet", // 
+			"Trombone", // 
+			"Tuba", // 
+			"Mute Trumpet", // 
+			"French Horn", // 
+			"Brass Section", // 
+			"Synth Brass 1", // 
+			"Synth Brass 2", // 
+			"Soprano Sax", // 
+			"Alto Sax", // 
+			"Tenor Sax", // 
+			"Bari Sax", // 
+			"Oboe", // 
+			"Englsh Horn", // 
+			"Bassoon", // 
+			"Clarinet", // 
+			"Piccolo", // 
+			"Flute", // 
+			"Recorder", // 
+			"Pan Flute", // 
+			"Bottle Blow", // 
+			"Shakuhachi", // 
+			"Whistle", // 
+			"Ocarina", // 
+			"Square Wave", // 
+			"Saw Tooth", // 
+			"Caliope", // 
+			"Chiff Lead", // 
+			"Charang", // 
+			"Solo Synth Vox", // 
+			"Brite Saw", // 
+			"Brass & Lead", // 
+			"Fantasa Pad", // 
+			"Warm Pad", // 
+			"Poly Synth Pad", // 
+			"Space Vox Pad", // 
+			"Bow Glass Pad", // 
+			"Metal Pad", // 
+			"Halo Pad", // 
+			"Sweep Pad", // 
+			"Ice Rain", // 
+			"Sound Track", // 
+			"Crystal", // 
+			"Atmosphere", // 
+			"Brightness", // 
+			"Goblin", // 
+			"Echo Drops", // 
+			"Star Theme", // 
+			"Sitar", // 
+			"Banjo", // 
+			"Shamisen", // 
+			"Koto", // 
+			"Kalimba", // 
+			"Bag Pipe", // 
+			"Fiddle", // 
+			"Shanai", // 
+			"Tinkle Bell", // 
+			"Agogo", // 
+			"Steel Drums", // 
+			"Woodblock", // 
+			"Taiko Drum", // 
+			"Melodic Tom", // 
+			"Synth Drum", // 
+			"Revrse Cymbal", // 
+			"Guitar Fret Noise", // 
+			"Breath Noise", // 
+			"Sea Shore", // 
+			"Bird Tweet", // 
+			"Telephone Ring", // 
+			"Helicopter", // 
+			"Applause", // 
+			"Gun Shot", //
+	};
 }

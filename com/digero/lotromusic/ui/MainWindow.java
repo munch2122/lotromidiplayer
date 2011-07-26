@@ -59,16 +59,22 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.Preferences;
 
 import javax.imageio.ImageIO;
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 import javax.sound.midi.Transmitter;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -106,7 +112,8 @@ import com.digero.lotromusic.ui.events.SongPositionEvent;
 import com.digero.lotromusic.ui.events.SongPositionListener;
 import com.digero.lotromusic.ui.events.TrackMuteEvent;
 import com.digero.lotromusic.ui.events.TrackMuteListener;
-import com.digero.lotromusic.windows.WinApi;
+import com.digero.lotromusic.windows.NativeApi;
+import com.digero.lotromusic.windows.NativeApiUnavailableException;
 
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame implements SongPositionListener, TrackMuteListener {
@@ -139,7 +146,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 	private JButton sendTextButton;
 	private Timer updateTimer;
 
-	private JCheckBox localPreviewCheckbox;
+	private JCheckBox playLiveCheckbox;
 	private JSpinner transposeSpinner;
 	private JButton bestTransposeButton;
 	private JLabel notesMissedLabel;
@@ -152,7 +159,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	private ExternalDeviceFrame midiPianoFrame = null;
 
-	private Version version = new Version(1, 1, 0, 3);
+	private Version version = new Version(1, 1, 0, 4);
 
 	public MainWindow() {
 		this(null);
@@ -323,8 +330,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		trackPanel = new TrackListPanel();
 		trackPanel.setFocusable(true);
-		JScrollPane trkScrollPane = new JScrollPane(trackPanel,
-				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JScrollPane trkScrollPane = new JScrollPane(trackPanel, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		trkScrollPane.getVerticalScrollBar().setUnitIncrement(TrackListPanel.ROW_HEIGHT);
 		trackPanel.addTrackMuteListener(this);
 
@@ -348,29 +355,41 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			}
 		});
 
-		localPreviewCheckbox = new JCheckBox("MIDI preview mode");
-		localPreviewCheckbox.setToolTipText("Check to play music using the computer's "
-				+ "MIDI synthesizer, rather than playing in-game.");
-		localPreviewCheckbox.addActionListener(new ActionListener() {
+		playLiveCheckbox = new JCheckBox("Play Live in LotRO");
+		playLiveCheckbox
+				.setToolTipText("Check to play music in-game, rather than using the computer's MIDI synthesizer.");
+		playLiveCheckbox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (!localPreviewCheckbox.isSelected() && sequencer.isRunning()) {
-					if (!lotroReceiver.resetHWnd()) {
-						localPreviewCheckbox.setSelected(true);
-						showCantFindWindowError();
+				if (playLiveCheckbox.isSelected() && sequencer.isRunning()) {
+					try {
+						if (!lotroReceiver.resetHWnd()) {
+							playLiveCheckbox.setSelected(false);
+							showCantFindWindowError();
+						}
+						else if (!lotroReceiver.getKeyMap().isLoaded()) {
+							playLiveCheckbox.setSelected(false);
+							error(lotroReceiver.getKeyMap().getLastReadError(), "Failed to load key mappings");
+						}
 					}
-					else if (!lotroReceiver.getKeyMap().isLoaded()) {
-						localPreviewCheckbox.setSelected(true);
-						error(lotroReceiver.getKeyMap().getLastReadError(),
-								"Failed to load key mappings");
+					catch (NativeApiUnavailableException ex) {
+						playLiveCheckbox.setSelected(false);
+						showFeatureUnsupportedError();
 					}
 				}
-				lotroReceiver.setLocalPreviewMode(localPreviewCheckbox.isSelected());
-				prefs.putBoolean("localPreview", localPreviewCheckbox.isSelected());
+				lotroReceiver.setLocalPreviewMode(!playLiveCheckbox.isSelected());
+				prefs.putBoolean("localPreview", !playLiveCheckbox.isSelected());
 			}
 		});
-		localPreviewCheckbox.setSelected(prefs.getBoolean("localPreview", true));
-		lotroReceiver.setLocalPreviewMode(localPreviewCheckbox.isSelected());
+		if (NativeApi.isWindowsApi()) {
+			playLiveCheckbox.setSelected(!prefs.getBoolean("localPreview", true));
+		}
+		else {
+			playLiveCheckbox.setSelected(false);
+			playLiveCheckbox.setEnabled(false);
+			playLiveCheckbox.setToolTipText(NativeApi.ERROR_MESSAGE);
+		}
+		lotroReceiver.setLocalPreviewMode(!playLiveCheckbox.isSelected());
 
 		notesMissedLabel = new JLabel();
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -36, 36, 1));
@@ -437,12 +456,20 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 			public void actionPerformed(ActionEvent e) {
 				// Reset the HWND every 15s
-				if (System.currentTimeMillis() - lastResetMillis > 15000) {
-					lastResetMillis = System.currentTimeMillis();
-					lotroReceiver.resetHWnd();
+				try {
+					if (System.currentTimeMillis() - lastResetMillis > 15000) {
+						lastResetMillis = System.currentTimeMillis();
+						lotroReceiver.resetHWnd();
+					}
+					if (lotroReceiver.isValidHWnd()) {
+						NativeApi.getInstance().SendFocusMessage(lotroReceiver.getHWnd(), true);
+					}
 				}
-				if (lotroReceiver.isValidHWnd()) {
-					WinApi.SendFocusMessage(lotroReceiver.getHWnd(), true);
+				catch (NativeApiUnavailableException ex) {
+					if (e.getSource() instanceof Timer) {
+						Timer t = (Timer) e.getSource();
+						t.stop();
+					}
 				}
 			}
 		});
@@ -453,19 +480,40 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		bkgdSoundCheckBox.setToolTipText("'Tricks' LotRO into thinking it's the active window.");
 		bkgdSoundCheckBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (bkgdSoundCheckBox.isSelected()) {
-					soundTimer.start();
-				}
-				else {
-					if (lotroReceiver.isValidHWnd()) {
-						WinApi.SendFocusMessage(lotroReceiver.getHWnd(), false);
+				try {
+					if (!NativeApi.isWindowsApi()) {
+						throw new NativeApiUnavailableException();
 					}
-					soundTimer.stop();
+
+					if (bkgdSoundCheckBox.isSelected()) {
+						soundTimer.start();
+					}
+					else {
+						if (lotroReceiver.isValidHWnd()) {
+							NativeApi.getInstance().SendFocusMessage(lotroReceiver.getHWnd(), false);
+
+						}
+						soundTimer.stop();
+					}
 				}
+				catch (NativeApiUnavailableException e1) {
+					if (bkgdSoundCheckBox.isSelected()) {
+						showFeatureUnsupportedError();
+						bkgdSoundCheckBox.setSelected(false);
+					}
+				}
+
 				prefs.putBoolean("bkgdSound", bkgdSoundCheckBox.isSelected());
 			}
 		});
-		bkgdSoundCheckBox.setSelected(prefs.getBoolean("bkgdSound", false));
+		if (NativeApi.isWindowsApi()) {
+			bkgdSoundCheckBox.setSelected(prefs.getBoolean("bkgdSound", false));
+		}
+		else {
+			bkgdSoundCheckBox.setSelected(false);
+			bkgdSoundCheckBox.setEnabled(false);
+			bkgdSoundCheckBox.setToolTipText(NativeApi.ERROR_MESSAGE);
+		}
 		if (bkgdSoundCheckBox.isSelected()) {
 			soundTimer.start();
 		}
@@ -490,13 +538,18 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		ActionListener sendTextListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (!lotroReceiver.resetHWnd()) {
-					showCantFindWindowError();
-					return;
+				try {
+					if (!lotroReceiver.resetHWnd()) {
+						showCantFindWindowError();
+						return;
+					}
+					NativeApi.getInstance().SendKeyString(lotroReceiver.getHWnd(), "~" + typeTextField.getText() + "~",
+							!lotroReceiver.isPlaySoundInactive());
+					typeTextField.setText("");
 				}
-				WinApi.SendKeyString(lotroReceiver.getHWnd(), "~" + typeTextField.getText() + "~",
-						!lotroReceiver.isPlaySoundInactive());
-				typeTextField.setText("");
+				catch (NativeApiUnavailableException ex) {
+					showFeatureUnsupportedError();
+				}
 			}
 		};
 
@@ -509,8 +562,12 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		// Play/Pause controls
 		TableLayout controlsLayout = new TableLayout( //
-				new double[] { 0, 0.50, pref, pref, 0.50, 60, 0 }, //
-				new double[] { pref, pref });
+				new double[] {
+						0, 0.50, pref, pref, 0.50, 60, 0
+				}, //
+				new double[] {
+						pref, pref
+				});
 		controlsLayout.setHGap(6);
 		controlsLayout.setVGap(6);
 		JPanel controlsPanel = new JPanel(controlsLayout);
@@ -518,12 +575,16 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		controlsPanel.add(timerLabel, "5, 0, r, c");
 		controlsPanel.add(playButton, "2, 1");
 		controlsPanel.add(stopButton, "3, 1");
-		controlsPanel.add(localPreviewCheckbox, "4, 1, 5, 1, l, c");
+		controlsPanel.add(playLiveCheckbox, "4, 1, 5, 1, l, c");
 
 		// Transpose/Speed settings
 		TableLayout settingsLayout = new TableLayout( //
-				new double[] { pref, pref, pref, fill }, //
-				new double[] { 0.50, 2, pref, 4, 0.50, 4, pref, 4, pref });
+				new double[] {
+						pref, pref, pref, fill
+				}, //
+				new double[] {
+						0.50, 2, pref, 4, 0.50, 4, pref, 4, pref
+				});
 		settingsLayout.setHGap(8);
 		JPanel settingsPanel = new JPanel(settingsLayout);
 		settingsPanel.setBorder(new TitledBorder("Play Settings"));
@@ -539,7 +600,10 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		settingsPanel.add(new JLabel("Instrument:"), "0, 6");
 		settingsPanel.add(instrumentComboBox, "1, 6, 3, 6, l, c");
 
-		settingsPanel.add(new JLabel("Game sound:"), "0, 8");
+		JLabel gameSoundLabel = new JLabel("Game sound:");
+		if (!NativeApi.isWindowsApi())
+			gameSoundLabel.setEnabled(false);
+		settingsPanel.add(gameSoundLabel, "0, 8");
 		settingsPanel.add(bkgdSoundCheckBox, "1, 8, 3, 8, l, c");
 
 		// JPanel soundModePanel = new JPanel(new BorderLayout());
@@ -549,15 +613,22 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		// Type text to the game
 		JPanel typeTextPanel = new JPanel(new TableLayout( //
-				new double[] { fill, 2, pref }, new double[] { pref }));
+				new double[] {
+						fill, 2, pref
+				}, new double[] {
+					pref
+				}));
 
 		typeTextPanel.setBorder(new TitledBorder("Type text in the game:"));
 		typeTextPanel.add(typeTextField, "0, 0");
 		typeTextPanel.add(sendTextButton, "2, 0");
 
 		TableLayout contentPaneLayout = new TableLayout( //
-				new double[] { 4, fill, 4 }, //
-				new double[] { 0, // 
+				new double[] {
+						4, fill, 4
+				}, //
+				new double[] {
+						0, // 
 						pref, // 1 Title
 						fill, // 2 Track List
 						pref, // 3 Controls
@@ -571,7 +642,9 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		contentPane.add(trkScrollPane, "0, 2, 2, 2");
 		contentPane.add(controlsPanel, "1, 3");
 		contentPane.add(settingsPanel, "1, 4");
-		contentPane.add(typeTextPanel, "1, 5");
+		if (NativeApi.isWindowsApi()) {
+			contentPane.add(typeTextPanel, "1, 5");
+		}
 
 		new DropTarget(this, new MyDropListener());
 
@@ -601,11 +674,10 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				Version lastVersion = Version.parseVersion(prefs.get("lastVersion", null));
 				if (lastVersion != null && lastVersion.compareTo(version) < 0) {
 					ImageIcon aboutIcon = new ImageIcon(MainWindow.class.getResource("icn_96.png"));
-					JLabel updateMessage = new JLabel(
-							"<html>LotRO MIDI Player was updated to version " + version + "!<br>"
-									+ "Visit the website to see what's new.<br>"
-									+ "<a href='http://code.google.com/p/lotromidiplayer/wiki/VersionHistory'>"
-									+ "http://code.google.com/p/lotromidiplayer/wiki/VersionHistory</a></html>");
+					JLabel updateMessage = new JLabel("<html>LotRO MIDI Player was updated to version " + version
+							+ "!<br>" + "Visit the website to see what's new.<br>"
+							+ "<a href='http://code.google.com/p/lotromidiplayer/wiki/VersionHistory'>"
+							+ "http://code.google.com/p/lotromidiplayer/wiki/VersionHistory</a></html>");
 					updateMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 					updateMessage.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent e) {
@@ -736,8 +808,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		fileMenu.setMnemonic(KeyEvent.VK_F);
 
 		JMenuItem openMenuItem = fileMenu.add(new JMenuItem("Open MIDI File...", KeyEvent.VK_O));
-		openMenuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+		openMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
 		openMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int result = fileChooser.showOpenDialog(MainWindow.this);
@@ -748,8 +819,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		});
 
 		exportAbcMenuItem = fileMenu.add(new JMenuItem("Export to ABC...", KeyEvent.VK_E));
-		exportAbcMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,
-				InputEvent.CTRL_DOWN_MASK));
+		exportAbcMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
 		exportAbcMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				exportAbc();
@@ -757,8 +827,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		});
 		exportAbcMenuItem.setEnabled(false);
 
-		JMenuItem midiPianoMenuItem = fileMenu.add(new JMenuItem("Connect MIDI Piano...",
-				KeyEvent.VK_M));
+		JMenuItem midiPianoMenuItem = fileMenu.add(new JMenuItem("Connect MIDI Piano...", KeyEvent.VK_M));
 		midiPianoMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (midiPianoFrame == null) {
@@ -768,12 +837,15 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				midiPianoFrame.setVisible(true);
 			}
 		});
+		if (!NativeApi.isWindowsApi()) {
+			midiPianoMenuItem.setEnabled(false);
+			midiPianoMenuItem.setToolTipText(NativeApi.ERROR_MESSAGE);
+		}
 
 		fileMenu.addSeparator();
 
 		JMenuItem exitMenuItem = fileMenu.add(new JMenuItem("Exit", KeyEvent.VK_X));
-		exitMenuItem.setAccelerator(KeyStroke
-				.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
+		exitMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, InputEvent.ALT_DOWN_MASK));
 		exitMenuItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
@@ -804,11 +876,10 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		about.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ImageIcon aboutIcon = new ImageIcon(MainWindow.class.getResource("icn_96.png"));
-				JLabel aboutMessage = new JLabel("<html>Lord of the Rings Online MIDI Player<br>"
-						+ "Version " + version + "<br>" + "Created by Digero of Landroval<br>"
+				JLabel aboutMessage = new JLabel("<html>Lord of the Rings Online MIDI Player<br>" + "Version "
+						+ version + "<br>" + "Created by Digero of Landroval<br>"
 						+ "<a href='http://lotromidiplayer.googlecode.com'>"
-						+ "http://lotromidiplayer.googlecode.com</a><br>"
-						+ "&copy; 2009 Ben Howell</html>");
+						+ "http://lotromidiplayer.googlecode.com</a><br>" + "&copy; 2009-2011 Ben Howell</html>");
 				aboutMessage.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				aboutMessage.addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
@@ -831,8 +902,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				return true;
 			}
 		}
-		catch (Exception e) {
-		}
+		catch (Exception e) {}
 		return false;
 	}
 
@@ -851,16 +921,21 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	private void playPause() {
 		if (!sequencer.isRunning()) {
-			if (!lotroReceiver.isLocalPreviewMode()) {
-				if (!lotroReceiver.resetHWnd()) {
-					showCantFindWindowError();
-					return;
+			try {
+				if (!lotroReceiver.isLocalPreviewMode()) {
+					if (!lotroReceiver.resetHWnd()) {
+						showCantFindWindowError();
+						return;
+					}
+					if (!lotroReceiver.getKeyMap().isLoaded()) {
+						error(lotroReceiver.getKeyMap().getLastReadError(), "Failed to load key mappings");
+						return;
+					}
 				}
-				if (!lotroReceiver.getKeyMap().isLoaded()) {
-					error(lotroReceiver.getKeyMap().getLastReadError(),
-							"Failed to load key mappings");
-					return;
-				}
+			}
+			catch (NativeApiUnavailableException e) {
+				playLiveCheckbox.setSelected(false);
+				lotroReceiver.setLocalPreviewMode(true);
 			}
 			if (sequencer.getMicrosecondPosition() >= sequencer.getMicrosecondLength()) {
 				sequencer.setMicrosecondPosition(0);
@@ -901,17 +976,145 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 		updateTimerLabel();
 	}
 
+	/**
+	 * Ensures that there is at most one drum track, and that track contains
+	 * only drum notes.
+	 */
+	public static void mergeDrumTracks(Sequence song) {
+		Track[] tracks = song.getTracks();
+		// This doesn't work on Type 0 MIDI files
+		if (tracks.length == 1)
+			return;
+
+		final int DRUMS = 0x1;
+		final int NOTES = 0x2;
+		final int MIXED = DRUMS | NOTES;
+
+		int[] trackContents = new int[tracks.length];
+		int firstDrumTrack = -1;
+		boolean hasMultipleDrumTracks = false;
+		boolean hasMixed = false;
+
+		for (int i = 0; i < tracks.length; i++) {
+			Track track = tracks[i];
+			for (int j = 0; j < track.size(); j++) {
+				MidiEvent evt = track.get(j);
+				MidiMessage msg = evt.getMessage();
+				if (msg instanceof ShortMessage) {
+					ShortMessage m = (ShortMessage) msg;
+					if (m.getCommand() == ShortMessage.NOTE_ON) {
+						if (m.getChannel() == 9) {
+							trackContents[i] |= DRUMS;
+							if (firstDrumTrack == -1)
+								firstDrumTrack = i;
+							else if (firstDrumTrack != i)
+								hasMultipleDrumTracks = true;
+						}
+						else {
+							trackContents[i] |= NOTES;
+						}
+
+						if (trackContents[i] == MIXED) {
+							hasMixed = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// If it has 0 or 1 pure drum tracks, don't need to do anything
+		if (!hasMultipleDrumTracks && !hasMixed)
+			return;
+
+		Track drumTrack = song.createTrack();
+		try {
+			byte[] data = "Drums".getBytes("ASCII");
+			MetaMessage titleMsg = new MetaMessage();
+			titleMsg.setMessage(MidiToAbc.META_TRACK_NAME, data, data.length);
+			drumTrack.add(new MidiEvent(titleMsg, 0));
+		}
+		catch (UnsupportedEncodingException e) {}
+		catch (InvalidMidiDataException e) {}
+
+		for (int i = firstDrumTrack; i < tracks.length; i++) {
+			Track track = tracks[i];
+			if (trackContents[i] == DRUMS) {
+				// Pure drum track: copy all events except track name
+				for (int j = 0; j < track.size(); j++) {
+					MidiEvent evt = track.get(j);
+					MidiMessage msg = evt.getMessage();
+					if (msg instanceof MetaMessage) {
+						if (((MetaMessage) msg).getType() == MidiToAbc.META_TRACK_NAME)
+							continue;
+					}
+					drumTrack.add(evt);
+				}
+				song.deleteTrack(track);
+			}
+			else if (trackContents[i] == MIXED) {
+				// Mixed track: copy only the events on the drum channel
+				for (int j = 0; j < track.size(); j++) {
+					MidiEvent evt = track.get(j);
+					MidiMessage msg = evt.getMessage();
+					if (msg instanceof ShortMessage) {
+						if (((ShortMessage) msg).getChannel() == 9) {
+							drumTrack.add(evt);
+							if (track.remove(evt))
+								j--;
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public void openSong(File songFile) {
 		stop();
 
 		Sequence song;
 		try {
 			song = MidiSystem.getSequence(songFile);
+
+			if (song.getTracks().length == 1) {
+				Track track0 = song.getTracks()[0];
+				Track[] tracks = new Track[16];
+
+				int i = 0;
+				int trackNumber = 1;
+				while (i < track0.size()) {
+					MidiEvent evt = track0.get(i);
+					MidiMessage msg = evt.getMessage();
+					if (msg instanceof ShortMessage) {
+						int chan = ((ShortMessage) msg).getChannel();
+						if (tracks[chan] == null) {
+							tracks[chan] = song.createTrack();
+							try {
+								byte[] data = ("Track " + trackNumber++).getBytes("ASCII");
+								MetaMessage titleMsg = new MetaMessage();
+								titleMsg.setMessage(MidiToAbc.META_TRACK_NAME, data, data.length);
+								tracks[chan].add(new MidiEvent(titleMsg, 0));
+							}
+							catch (UnsupportedEncodingException e) {}
+							catch (InvalidMidiDataException e) {}
+						}
+						tracks[chan].add(evt);
+
+						if (!track0.remove(evt))
+							i++;
+					}
+					else {
+						i++;
+					}
+				}
+			}
+
+			mergeDrumTracks(song);
 			sequencer.setSequence(song);
 		}
 		catch (InvalidMidiDataException e) {
-			error("The file is not a valid MIDI file:\n" + songFile.getAbsolutePath() + "\n\n"
-					+ e.getMessage(), "Invalid MIDI File");
+			error("The file is not a valid MIDI file:\n" + songFile.getAbsolutePath() + "\n\n" + e.getMessage(),
+					"Invalid MIDI File");
 			return;
 		}
 		catch (IOException e) {
@@ -949,8 +1152,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				+ songPrefs.get("abcFileName", songName.replace(' ', '_'))));
 
 		trackPanel.songChanged(sequencer, trackInfo);
-		transposeInfo = new TransposeInfo(sequencer, (Instrument) instrumentComboBox
-				.getSelectedItem());
+		transposeInfo = new TransposeInfo(sequencer, (Instrument) instrumentComboBox.getSelectedItem());
 
 		int transpose = songPrefs.getInt("transpose", transposeInfo.getBestTranspose());
 		transposeSpinner.setValue(transpose);
@@ -985,9 +1187,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			saveTo = new File(saveTo.getParent() + File.separator + saveTo.getName() + ".abc");
 		}
 		if (saveTo.exists()) {
-			res = JOptionPane.showConfirmDialog(this, "File " + saveTo.getName()
-					+ " already exists. Overwrite?", "Confirm overwrite file",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+			res = JOptionPane.showConfirmDialog(this, "File " + saveTo.getName() + " already exists. Overwrite?",
+					"Confirm overwrite file", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
 			if (res == JOptionPane.CANCEL_OPTION) {
 				exportAbc();
@@ -997,8 +1198,7 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 		try {
 			PrintStream out = new PrintStream(saveTo);
-			MidiToAbc.convert(sequencer, titleText.getText(), songFile.getName(), lotroReceiver,
-					out);
+			MidiToAbc.convert(sequencer, titleText.getText(), songFile.getName(), lotroReceiver, out);
 			JOptionPane.showMessageDialog(this, "<html>Song successfully exported to ABC.<br><br>" //
 					+ "Title: <b>" + titleText.getText() + "</b><br>" //
 					+ "File name: <b>" + saveTo.getName() + "</b></html>", "Export success",
@@ -1006,17 +1206,15 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 			out.close();
 		}
 		catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Export failed:\n" + e.getMessage(),
-					"Export Failed", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Export failed:\n" + e.getMessage(), "Export Failed",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void refreshTransposeInfo() {
-		transposeInfo = new TransposeInfo(sequencer, (Instrument) instrumentComboBox
-				.getSelectedItem());
+		transposeInfo = new TransposeInfo(sequencer, (Instrument) instrumentComboBox.getSelectedItem());
 		bestTransposeButton.setText("Best: " + transposeInfo.getBestTranspose());
-		bestTransposeButton.setEnabled(transposeInfo.getBestTranspose() != lotroReceiver
-				.getTranspose());
+		bestTransposeButton.setEnabled(transposeInfo.getBestTranspose() != lotroReceiver.getTranspose());
 		updateTransposeText();
 	}
 
@@ -1072,9 +1270,12 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 	}
 
 	private void showCantFindWindowError() {
-		error("Unable to find Lord of the Rings Online window.\n"
-				+ "Make sure that the game is running.",
+		error("Unable to find Lord of the Rings Online window.\n" + "Make sure that the game is running.",
 				"Unable to find Lord of the Rings Online Window");
+	}
+
+	private void showFeatureUnsupportedError() {
+		error(NativeApi.ERROR_MESSAGE, NativeApi.ERROR_TITLE);
 	}
 
 	private void error(String message, String title) {
@@ -1098,32 +1299,28 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 					}
 				}
 			}
-			catch (Exception ex) {
-			}
+			catch (Exception ex) {}
 
 			try {
 				if (transmitter != null) {
 					transmitter.close();
 				}
 			}
-			catch (Exception ex) {
-			}
+			catch (Exception ex) {}
 
 			try {
 				if (lotroReceiver != null) {
 					lotroReceiver.close();
 				}
 			}
-			catch (Exception ex) {
-			}
+			catch (Exception ex) {}
 
 			try {
 				if (midiPianoFrame != null) {
 					midiPianoFrame.stop();
 				}
 			}
-			catch (Exception ex) {
-			}
+			catch (Exception ex) {}
 		}
 	}
 }

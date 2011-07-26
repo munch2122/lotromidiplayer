@@ -24,26 +24,45 @@ package com.digero.lotromusic.windows;
 
 import java.awt.event.KeyEvent;
 
-import javax.swing.JOptionPane;
-
 import com.digero.lotromusic.keyboard.DxScanCode;
 import com.digero.lotromusic.keyboard.KeyInfo;
 
-public class WinApi {
-	static {
-		System.out.println("Loading WinApi");
-		
-		try {
-			System.loadLibrary("JavaWinApi");
+class WinApi {
+	public static class Proxy implements NativeMethods {
+		@Override
+		public int FindWindow(String className, String windowName) throws NativeApiUnavailableException {
+			return WinApi.FindWindow(className, windowName);
 		}
-		catch (Throwable ex) {
-			JOptionPane.showMessageDialog(null,
-					"Failed to load required DLL file: JavaWinApi.dll\n\n" + ex.getMessage(),
-					"Failed to load required DLL", JOptionPane.ERROR_MESSAGE);
-			System.exit(1);
+
+		@Override
+		public String GetMyDocumentsPath() {
+			return WinApi.GetMyDocumentsPath();
 		}
-		// System.load(WinApi.class.getResource("JavaWinApi.dll").getPath());
-		// System.load(new File("JavaWinApi.dll").getAbsolutePath());
+
+		@Override
+		public void KeyDown(int hWnd, KeyInfo info, boolean setFocus) throws NativeApiUnavailableException {
+			WinApi.KeyDown(hWnd, info, setFocus);
+		}
+
+		@Override
+		public void KeyUp(int hWnd, KeyInfo info, boolean setFocus) throws NativeApiUnavailableException {
+			WinApi.KeyUp(hWnd, info, setFocus);
+		}
+
+		@Override
+		public void SendFocusMessage(int hWnd, boolean focus) throws NativeApiUnavailableException {
+			WinApi.SendFocusMessage(hWnd, focus);
+		}
+
+		@Override
+		public void SendKey(int hWnd, KeyInfo info, boolean sendUnfocus) throws NativeApiUnavailableException {
+			WinApi.SendKey(hWnd, info, sendUnfocus);
+		}
+
+		@Override
+		public void SendKeyString(int hWnd, String message, boolean sendUnfocus) throws NativeApiUnavailableException {
+			WinApi.SendKeyString(hWnd, message, sendUnfocus);
+		}
 	}
 
 	public static final int WM_KEYDOWN = 0x0100;
@@ -187,15 +206,15 @@ public class WinApi {
 
 				int vk;
 				switch (c) {
-					case '~':
-						vk = '\r';
-						break;
-					case '/':
-						vk = 191;
-						break;
-					default:
-						vk = (int) Character.toUpperCase(c);
-						break;
+				case '~':
+					vk = '\r';
+					break;
+				case '/':
+					vk = 191;
+					break;
+				default:
+					vk = (int) Character.toUpperCase(c);
+					break;
 				}
 
 				int sc = MapVirtualKey(vk, MAPVK_VK_TO_VSC);
