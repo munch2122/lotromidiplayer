@@ -1,3 +1,5 @@
+#sidebar Navigation
+
 ===Version 1.1.0.5===
     * Exporting drum tracks works once again.
 
