@@ -1,3 +1,6 @@
+===Version 1.1.0.5===
+    * Exporting drum tracks works once again.
+
 ===Version 1.1.0.4===
     * Improved support for loading "Type 0" MIDI files, which have all instruments in the same track. These types of files will now load with each instrument in a separate track.
     * Created a standalone download version, which will hopefully work people who've been having trouble running the web launch version. This version doesn't support live playing in LOTRO (only exporting to ABC).
