@@ -1,7 +1,7 @@
 #sidebar Navigation
 
 ===Version 1.1.0.5===
-    * Exporting drum tracks works once again.
+    * Exporting drum tracks to ABC works once again.
 
 ===Version 1.1.0.4===
     * Improved support for loading "Type 0" MIDI files, which have all instruments in the same track. These types of files will now load with each instrument in a separate track.
