@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project basedir="." default="dist" name="LotroMidiPlayer">
-    <property name="LotroMusic.location" value="${basedir}" />
+	<property name="version" value="1.1.0.5" /> <!-- Also change MainWindow.java -->
+	<property name="targetdir" value="${basedir}/target" />
+	<property name="standalone_jar" value="lotromusic-standalone-${version}.jar" />
+	
 	<path id="project.classpath">
 		<pathelement location="." />
 	</path>
 	<target name="init" />
-	<target name="clean" />
+	<target name="clean">
+		<rmdir dir="${targetdir}" />
+	</target>
 	<target depends="init" name="build">
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<javac destdir=".">
@@ -14,31 +19,33 @@
 		</javac>
 	</target>
 	<target name="dist" depends="build">
-		<echo message="[JNLP] ${LotroMusic.location}" />
+		<mkdir dir="${targetdir}" />
 
-		<jar jarfile="${LotroMusic.location}/Website/lotromusic.jar" basedir="${LotroMusic.location}" 
+		<echo message="[JNLP] ${basedir}" />
+
+		<jar jarfile="${targetdir}/lotromusic.jar" basedir="${basedir}" 
 			includes="**/*.class,**/*.png" 
 			excludes="*.*,.*/**,Website/**,**/*-fw.png">
 			<manifest>
 				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicMain" />
 			</manifest>
 		</jar>
-		<signjar jar="${LotroMusic.location}/Website/lotromusic.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
+		<signjar jar="${targetdir}/lotromusic.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 
-		<jar jarfile="${LotroMusic.location}/Website/lotromusic_dll.jar" basedir="${LotroMusic.location}" includes="JavaWinApi.dll" />
-		<signjar jar="${LotroMusic.location}/Website/lotromusic_dll.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
-	</target>
-	<target name="dist-standalone" depends="build">
-		<echo message="[STANDALONE] ${LotroMusic.location}" />
-
-		<jar jarfile="${LotroMusic.location}/Website/lotromusic-standalone.jar" basedir="${LotroMusic.location}" 
+		<jar jarfile="${targetdir}/lotromusic_dll.jar" basedir="${basedir}" includes="JavaWinApi.dll" />
+		<signjar jar="${targetdir}/lotromusic_dll.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
+		
+		
+		<echo message="[STANDALONE] ${basedir}" />
+		
+		<jar jarfile="${targetdir}/${standalone_jar}" basedir="${basedir}" 
 			includes="**/*.class,**/*.png" 
-			excludes="*.*,.*/**,Website/**,**/*-fw.png">
+			excludes=".*/**,Website/**,**/*-fw.png">
 			<manifest>
 				<attribute name="Main-Class" value="com.digero.lotromusic.LotroMusicStandalone" />
 			</manifest>
 		</jar>
-		<signjar jar="${LotroMusic.location}/Website/lotromusic-standalone.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
+		<signjar jar="${targetdir}/${standalone_jar}.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 	</target>
 	<target name="LotroMusicMain">
 		<java classname="com.digero.lotromusic.LotroMusicMain" failonerror="true" fork="yes">
