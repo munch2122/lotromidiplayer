@@ -1,4 +1,5 @@
 #sidebar Navigation
+
 = LotRO MIDI Player =
 
 == Features ==
@@ -11,6 +12,8 @@
 <a href="http://lotromidiplayer.googlecode.com/files/LotRO_MIDI_Player.jnlp"><img src="http://lotromidiplayer.googlecode.com/svn/trunk/Website/download.png" title="Run LotRO MIDI Player" alt="Run LotRO MIDI Player"/></a><br />
 _Requires [http://www.java.com/en/download/installed.jsp?detect=jre&try=1 Java 6.0] or greater._
 
+Having trouble with the web start version? Try downloading the [http://code.google.com/p/lotromidiplayer/downloads/list?q=label:StandaloneVersion standalone version].
+
 == Support ==
 Read the [UserGuide User Guide] for instructions.
 
@@ -20,6 +23,6 @@ Visit the [http://forums.lotro.com/showthread.php?t=121331 discussion thread] on
 http://lotromidiplayer.googlecode.com/svn/trunk/Website/screenshot-white.png
 
 -----------------
-Created by Digero of Landroval
+Created by Digero
 
 [https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=10589444 https://www.paypal.com/en_US/i/btn/x-click-but04.gif]
