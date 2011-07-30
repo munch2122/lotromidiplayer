@@ -1,3 +1,5 @@
+#sidebar Navigation
+
 If you're getting errors when you try to run LotRO MIDI Player, you might need to delete Java's temporary internet files.  Follow these instructions to delete them.
 
   # Open the Java control panel, and under Temporary Internet Files, click Settings...
