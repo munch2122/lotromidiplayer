@@ -1,3 +1,4 @@
+#Sidebar Navigation
 = LotRO MIDI Player =
 
 == Features ==
