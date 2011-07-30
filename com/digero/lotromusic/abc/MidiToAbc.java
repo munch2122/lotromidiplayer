@@ -182,7 +182,7 @@ public class MidiToAbc {
 			else if (msg instanceof ShortMessage) {
 				ShortMessage m = (ShortMessage) msg;
 				int cmd = m.getCommand();
-				if ((cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) && m.getChannel() != 9) {
+				if (cmd == ShortMessage.NOTE_ON || cmd == ShortMessage.NOTE_OFF) {
 					// Try 30 different possible tempos: [62 BPM .. 120 BPM] by 2's
 					// We're checking all tracks here, even the muted ones, so that we have
 					// identical quantization if the song is split into multiple abc files

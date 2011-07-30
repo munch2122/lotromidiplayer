@@ -159,7 +159,8 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 
 	private ExternalDeviceFrame midiPianoFrame = null;
 
-	private Version version = new Version(1, 1, 0, 4);
+	// Also change build.xml
+	private Version version = new Version(1, 1, 0, 5);
 
 	public MainWindow() {
 		this(null);
@@ -1109,7 +1110,6 @@ public class MainWindow extends JFrame implements SongPositionListener, TrackMut
 				}
 			}
 
-			mergeDrumTracks(song);
 			sequencer.setSequence(song);
 		}
 		catch (InvalidMidiDataException e) {
