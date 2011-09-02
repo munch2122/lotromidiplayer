@@ -2,22 +2,24 @@
 <project basedir="." default="dist" name="LotroMidiPlayer">
 	<property name="version" value="1.1.0.5" /> <!-- Also change MainWindow.java -->
 	<property name="targetdir" value="${basedir}/target" />
-	<property name="standalone_jar" value="lotromusic-standalone-${version}.jar" />
+	<property name="standalone_jar" value="LotroMidiPlayer-${version}.jar" />
 	
 	<path id="project.classpath">
 		<pathelement location="." />
 	</path>
-	<target name="init" />
+		
 	<target name="clean">
-		<rmdir dir="${targetdir}" />
+		<delete dir="${targetdir}" />
 	</target>
-	<target depends="init" name="build">
+	
+	<target name="build">
 		<echo message="${ant.project.name}: ${ant.file}" />
 		<javac destdir=".">
 			<src path="." />
 			<classpath refid="project.classpath" />
 		</javac>
 	</target>
+	
 	<target name="dist" depends="build">
 		<mkdir dir="${targetdir}" />
 
@@ -47,14 +49,5 @@
 		</jar>
 		<signjar jar="${targetdir}/${standalone_jar}.jar" alias="digero" keystore="C:/Users/Ben/Keys/digero.keystore" storepass="dzT2kX86qt452OnY" />
 	</target>
-	<target name="LotroMusicMain">
-		<java classname="com.digero.lotromusic.LotroMusicMain" failonerror="true" fork="yes">
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
-	<target name="LotroMusicStandalone">
-		<java classname="com.digero.lotromusic.LotroMusicStandalone" failonerror="true" fork="yes">
-			<classpath refid="project.classpath" />
-		</java>
-	</target>
+	
 </project>
