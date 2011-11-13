@@ -17,7 +17,7 @@ public class NativeApi {
 				}
 				else {
 					System.loadLibrary("JavaWinApi");
-					instance = new WinApi.Proxy();
+					instance = new JavaWinApi.Proxy();
 				}
 			}
 			catch (Throwable ex) {
@@ -29,7 +29,7 @@ public class NativeApi {
 	}
 
 	public static boolean isWindowsApi() {
-		return getInstance() instanceof WinApi.Proxy;
+		return getInstance() instanceof JavaWinApi.Proxy;
 	}
 
 	private NativeApi() {
