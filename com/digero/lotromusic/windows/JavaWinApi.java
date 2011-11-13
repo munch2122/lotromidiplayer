@@ -27,41 +27,41 @@ import java.awt.event.KeyEvent;
 import com.digero.lotromusic.keyboard.DxScanCode;
 import com.digero.lotromusic.keyboard.KeyInfo;
 
-class WinApi {
+public class JavaWinApi {
 	public static class Proxy implements NativeMethods {
 		@Override
 		public int FindWindow(String className, String windowName) throws NativeApiUnavailableException {
-			return WinApi.FindWindow(className, windowName);
+			return JavaWinApi.FindWindow(className, windowName);
 		}
 
 		@Override
 		public String GetMyDocumentsPath() {
-			return WinApi.GetMyDocumentsPath();
+			return JavaWinApi.GetMyDocumentsPath();
 		}
 
 		@Override
 		public void KeyDown(int hWnd, KeyInfo info, boolean setFocus) throws NativeApiUnavailableException {
-			WinApi.KeyDown(hWnd, info, setFocus);
+			JavaWinApi.KeyDown(hWnd, info, setFocus);
 		}
 
 		@Override
 		public void KeyUp(int hWnd, KeyInfo info, boolean setFocus) throws NativeApiUnavailableException {
-			WinApi.KeyUp(hWnd, info, setFocus);
+			JavaWinApi.KeyUp(hWnd, info, setFocus);
 		}
 
 		@Override
 		public void SendFocusMessage(int hWnd, boolean focus) throws NativeApiUnavailableException {
-			WinApi.SendFocusMessage(hWnd, focus);
+			JavaWinApi.SendFocusMessage(hWnd, focus);
 		}
 
 		@Override
 		public void SendKey(int hWnd, KeyInfo info, boolean sendUnfocus) throws NativeApiUnavailableException {
-			WinApi.SendKey(hWnd, info, sendUnfocus);
+			JavaWinApi.SendKey(hWnd, info, sendUnfocus);
 		}
 
 		@Override
 		public void SendKeyString(int hWnd, String message, boolean sendUnfocus) throws NativeApiUnavailableException {
-			WinApi.SendKeyString(hWnd, message, sendUnfocus);
+			JavaWinApi.SendKeyString(hWnd, message, sendUnfocus);
 		}
 	}
 
