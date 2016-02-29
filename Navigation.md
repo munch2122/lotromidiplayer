@@ -1,0 +1,5 @@
+  * [Home](Home.md)
+  * [User Guide](UserGuide.md)
+    * [Restore Desktop Shortcut](InstallShortcuts.md)
+    * [Delete Java Temporary Internet Files](DeleteJavaTempFiles.md)
+  * [Version History](VersionHistory.md)
